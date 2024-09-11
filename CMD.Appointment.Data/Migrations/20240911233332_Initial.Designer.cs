@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CMD.Appointment.Data.Migrations
 {
     [DbContext(typeof(AppointmentDbContext))]
-    [Migration("20240911223342_Data seeding")]
-    partial class Dataseeding
+    [Migration("20240911233332_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -89,12 +89,12 @@ namespace CMD.Appointment.Data.Migrations
                         {
                             Id = 1,
                             CreatedBy = "Admin",
-                            CreatedDate = new DateTime(2024, 9, 12, 4, 3, 41, 739, DateTimeKind.Local).AddTicks(3920),
+                            CreatedDate = new DateTime(2024, 9, 12, 5, 3, 32, 283, DateTimeKind.Local).AddTicks(3362),
                             Date = new DateOnly(2024, 9, 20),
                             DoctorId = 202,
                             Email = "john.doe@example.com",
                             LastModifiedBy = "Admin",
-                            LastModifiedDate = new DateTime(2024, 9, 12, 4, 3, 41, 739, DateTimeKind.Local).AddTicks(3933),
+                            LastModifiedDate = new DateTime(2024, 9, 12, 5, 3, 32, 283, DateTimeKind.Local).AddTicks(3377),
                             Message = "Please bring your medical reports.",
                             PatientId = 101,
                             Phone = "123-456-7890",
@@ -106,12 +106,12 @@ namespace CMD.Appointment.Data.Migrations
                         {
                             Id = 2,
                             CreatedBy = "Admin",
-                            CreatedDate = new DateTime(2024, 9, 12, 4, 3, 41, 739, DateTimeKind.Local).AddTicks(3936),
+                            CreatedDate = new DateTime(2024, 9, 12, 5, 3, 32, 283, DateTimeKind.Local).AddTicks(3385),
                             Date = new DateOnly(2024, 9, 22),
                             DoctorId = 203,
                             Email = "jane.smith@example.com",
                             LastModifiedBy = "Admin",
-                            LastModifiedDate = new DateTime(2024, 9, 12, 4, 3, 41, 739, DateTimeKind.Local).AddTicks(3937),
+                            LastModifiedDate = new DateTime(2024, 9, 12, 5, 3, 32, 283, DateTimeKind.Local).AddTicks(3386),
                             Message = "Appointment canceled by patient.",
                             PatientId = 102,
                             Phone = "987-654-3210",
@@ -123,12 +123,12 @@ namespace CMD.Appointment.Data.Migrations
                         {
                             Id = 3,
                             CreatedBy = "Admin",
-                            CreatedDate = new DateTime(2024, 9, 12, 4, 3, 41, 739, DateTimeKind.Local).AddTicks(3939),
+                            CreatedDate = new DateTime(2024, 9, 12, 5, 3, 32, 283, DateTimeKind.Local).AddTicks(3391),
                             Date = new DateOnly(2024, 9, 25),
                             DoctorId = 204,
                             Email = "alice.jones@example.com",
                             LastModifiedBy = "Admin",
-                            LastModifiedDate = new DateTime(2024, 9, 12, 4, 3, 41, 739, DateTimeKind.Local).AddTicks(3939),
+                            LastModifiedDate = new DateTime(2024, 9, 12, 5, 3, 32, 283, DateTimeKind.Local).AddTicks(3392),
                             Message = "Dental checkup completed.",
                             PatientId = 103,
                             Phone = "555-123-4567",
@@ -140,12 +140,12 @@ namespace CMD.Appointment.Data.Migrations
                         {
                             Id = 4,
                             CreatedBy = "Admin",
-                            CreatedDate = new DateTime(2024, 9, 12, 4, 3, 41, 739, DateTimeKind.Local).AddTicks(3941),
+                            CreatedDate = new DateTime(2024, 9, 12, 5, 3, 32, 283, DateTimeKind.Local).AddTicks(3396),
                             Date = new DateOnly(2024, 9, 26),
                             DoctorId = 205,
                             Email = "mike.brown@example.com",
                             LastModifiedBy = "Admin",
-                            LastModifiedDate = new DateTime(2024, 9, 12, 4, 3, 41, 739, DateTimeKind.Local).AddTicks(3942),
+                            LastModifiedDate = new DateTime(2024, 9, 12, 5, 3, 32, 283, DateTimeKind.Local).AddTicks(3397),
                             Message = "Please bring your previous prescription.",
                             PatientId = 104,
                             Phone = "555-987-6543",
@@ -157,12 +157,12 @@ namespace CMD.Appointment.Data.Migrations
                         {
                             Id = 5,
                             CreatedBy = "Admin",
-                            CreatedDate = new DateTime(2024, 9, 12, 4, 3, 41, 739, DateTimeKind.Local).AddTicks(3944),
+                            CreatedDate = new DateTime(2024, 9, 12, 5, 3, 32, 283, DateTimeKind.Local).AddTicks(3400),
                             Date = new DateOnly(2024, 9, 28),
                             DoctorId = 206,
                             Email = "chris.evans@example.com",
                             LastModifiedBy = "Admin",
-                            LastModifiedDate = new DateTime(2024, 9, 12, 4, 3, 41, 739, DateTimeKind.Local).AddTicks(3944),
+                            LastModifiedDate = new DateTime(2024, 9, 12, 5, 3, 32, 283, DateTimeKind.Local).AddTicks(3401),
                             Message = "Doctor is unavailable, appointment rescheduled.",
                             PatientId = 105,
                             Phone = "555-654-7891",

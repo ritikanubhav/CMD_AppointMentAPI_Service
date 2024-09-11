@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace CMD.Appointment.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class Dataseeding : Migration
+    public partial class Initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -43,11 +43,11 @@ namespace CMD.Appointment.Data.Migrations
                 columns: new[] { "Id", "CreatedBy", "CreatedDate", "Date", "DoctorId", "Email", "LastModifiedBy", "LastModifiedDate", "Message", "PatientId", "Phone", "PurposeOfVisit", "Status", "Time" },
                 values: new object[,]
                 {
-                    { 1, "Admin", new DateTime(2024, 9, 12, 4, 3, 41, 739, DateTimeKind.Local).AddTicks(3920), new DateOnly(2024, 9, 20), 202, "john.doe@example.com", "Admin", new DateTime(2024, 9, 12, 4, 3, 41, 739, DateTimeKind.Local).AddTicks(3933), "Please bring your medical reports.", 101, "123-456-7890", "General Checkup", 0, new TimeOnly(9, 30, 0) },
-                    { 2, "Admin", new DateTime(2024, 9, 12, 4, 3, 41, 739, DateTimeKind.Local).AddTicks(3936), new DateOnly(2024, 9, 22), 203, "jane.smith@example.com", "Admin", new DateTime(2024, 9, 12, 4, 3, 41, 739, DateTimeKind.Local).AddTicks(3937), "Appointment canceled by patient.", 102, "987-654-3210", "Follow-up on blood test", 1, new TimeOnly(11, 0, 0) },
-                    { 3, "Admin", new DateTime(2024, 9, 12, 4, 3, 41, 739, DateTimeKind.Local).AddTicks(3939), new DateOnly(2024, 9, 25), 204, "alice.jones@example.com", "Admin", new DateTime(2024, 9, 12, 4, 3, 41, 739, DateTimeKind.Local).AddTicks(3939), "Dental checkup completed.", 103, "555-123-4567", "Dental Checkup", 2, new TimeOnly(10, 0, 0) },
-                    { 4, "Admin", new DateTime(2024, 9, 12, 4, 3, 41, 739, DateTimeKind.Local).AddTicks(3941), new DateOnly(2024, 9, 26), 205, "mike.brown@example.com", "Admin", new DateTime(2024, 9, 12, 4, 3, 41, 739, DateTimeKind.Local).AddTicks(3942), "Please bring your previous prescription.", 104, "555-987-6543", "Eye Examination", 0, new TimeOnly(14, 0, 0) },
-                    { 5, "Admin", new DateTime(2024, 9, 12, 4, 3, 41, 739, DateTimeKind.Local).AddTicks(3944), new DateOnly(2024, 9, 28), 206, "chris.evans@example.com", "Admin", new DateTime(2024, 9, 12, 4, 3, 41, 739, DateTimeKind.Local).AddTicks(3944), "Doctor is unavailable, appointment rescheduled.", 105, "555-654-7891", "Orthopedic Consultation", 1, new TimeOnly(16, 30, 0) }
+                    { 1, "Admin", new DateTime(2024, 9, 12, 5, 3, 32, 283, DateTimeKind.Local).AddTicks(3362), new DateOnly(2024, 9, 20), 202, "john.doe@example.com", "Admin", new DateTime(2024, 9, 12, 5, 3, 32, 283, DateTimeKind.Local).AddTicks(3377), "Please bring your medical reports.", 101, "123-456-7890", "General Checkup", 0, new TimeOnly(9, 30, 0) },
+                    { 2, "Admin", new DateTime(2024, 9, 12, 5, 3, 32, 283, DateTimeKind.Local).AddTicks(3385), new DateOnly(2024, 9, 22), 203, "jane.smith@example.com", "Admin", new DateTime(2024, 9, 12, 5, 3, 32, 283, DateTimeKind.Local).AddTicks(3386), "Appointment canceled by patient.", 102, "987-654-3210", "Follow-up on blood test", 1, new TimeOnly(11, 0, 0) },
+                    { 3, "Admin", new DateTime(2024, 9, 12, 5, 3, 32, 283, DateTimeKind.Local).AddTicks(3391), new DateOnly(2024, 9, 25), 204, "alice.jones@example.com", "Admin", new DateTime(2024, 9, 12, 5, 3, 32, 283, DateTimeKind.Local).AddTicks(3392), "Dental checkup completed.", 103, "555-123-4567", "Dental Checkup", 2, new TimeOnly(10, 0, 0) },
+                    { 4, "Admin", new DateTime(2024, 9, 12, 5, 3, 32, 283, DateTimeKind.Local).AddTicks(3396), new DateOnly(2024, 9, 26), 205, "mike.brown@example.com", "Admin", new DateTime(2024, 9, 12, 5, 3, 32, 283, DateTimeKind.Local).AddTicks(3397), "Please bring your previous prescription.", 104, "555-987-6543", "Eye Examination", 0, new TimeOnly(14, 0, 0) },
+                    { 5, "Admin", new DateTime(2024, 9, 12, 5, 3, 32, 283, DateTimeKind.Local).AddTicks(3400), new DateOnly(2024, 9, 28), 206, "chris.evans@example.com", "Admin", new DateTime(2024, 9, 12, 5, 3, 32, 283, DateTimeKind.Local).AddTicks(3401), "Doctor is unavailable, appointment rescheduled.", 105, "555-654-7891", "Orthopedic Consultation", 1, new TimeOnly(16, 30, 0) }
                 });
         }
 

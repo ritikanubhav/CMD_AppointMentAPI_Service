@@ -82,12 +82,9 @@ namespace CMD.Appointment.ApiService
                 throw new Exception($"An error occurred while migrating the database: {ex.Message}", ex);
             }
 
-            // Configure the HTTP request pipeline.
-            //if (app.Environment.IsDevelopment())
-            //{
+            
             app.UseSwagger();
-                app.UseSwaggerUI();
-            //}
+            app.UseSwaggerUI();
 
             app.UseHttpsRedirection();
             app.UseCors("AllowSpecificOrigin");

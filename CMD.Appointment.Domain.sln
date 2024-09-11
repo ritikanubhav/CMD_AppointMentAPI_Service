@@ -1,0 +1,57 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.10.35027.167
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CMD.Appointment.Domain", "CMD.Appointment.Domain\CMD.Appointment.Domain.csproj", "{AD37CF7B-A56F-4752-9214-28D1CE9C1617}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DomainLayer", "DomainLayer", "{C7F2138B-C4C8-4A7B-9A37-1F5D89C3C48C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DataLayer", "DataLayer", "{DE41A581-5F93-4E2F-BEDA-41DF8826FB17}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "API Layer", "API Layer", "{EAF86BF8-1690-4D3D-816C-195F994E22E4}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CMD.Appointment.Data", "CMD.Appointment.Data\CMD.Appointment.Data.csproj", "{B2CCE767-9D2E-4F41-A37E-899E55593DD2}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CMD.Appointment.ApiService", "CMD.Appointment.ApiService\CMD.Appointment.ApiService.csproj", "{DC79B698-7B9D-46BB-867A-82A549D33989}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AppointmentUnitTest", "AppointmentUnitTest", "{CFB204AA-15B2-42FF-B25B-93FCF5434F4B}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CMD.UnitTest", "CMD.UniTest\CMD.UnitTest.csproj", "{EA5314E0-E0DD-4D4F-8B32-E836B9870539}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{AD37CF7B-A56F-4752-9214-28D1CE9C1617}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AD37CF7B-A56F-4752-9214-28D1CE9C1617}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AD37CF7B-A56F-4752-9214-28D1CE9C1617}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AD37CF7B-A56F-4752-9214-28D1CE9C1617}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B2CCE767-9D2E-4F41-A37E-899E55593DD2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B2CCE767-9D2E-4F41-A37E-899E55593DD2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B2CCE767-9D2E-4F41-A37E-899E55593DD2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B2CCE767-9D2E-4F41-A37E-899E55593DD2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DC79B698-7B9D-46BB-867A-82A549D33989}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DC79B698-7B9D-46BB-867A-82A549D33989}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DC79B698-7B9D-46BB-867A-82A549D33989}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DC79B698-7B9D-46BB-867A-82A549D33989}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EA5314E0-E0DD-4D4F-8B32-E836B9870539}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EA5314E0-E0DD-4D4F-8B32-E836B9870539}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EA5314E0-E0DD-4D4F-8B32-E836B9870539}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EA5314E0-E0DD-4D4F-8B32-E836B9870539}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{AD37CF7B-A56F-4752-9214-28D1CE9C1617} = {C7F2138B-C4C8-4A7B-9A37-1F5D89C3C48C}
+		{B2CCE767-9D2E-4F41-A37E-899E55593DD2} = {DE41A581-5F93-4E2F-BEDA-41DF8826FB17}
+		{DC79B698-7B9D-46BB-867A-82A549D33989} = {EAF86BF8-1690-4D3D-816C-195F994E22E4}
+		{EA5314E0-E0DD-4D4F-8B32-E836B9870539} = {CFB204AA-15B2-42FF-B25B-93FCF5434F4B}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {59936AD1-1691-4C67-B724-4844DCADE66D}
+	EndGlobalSection
+EndGlobal

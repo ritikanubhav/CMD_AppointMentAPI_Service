@@ -2,6 +2,7 @@ using CMD.Appointment.ApiService.Controllers;
 using CMD.Appointment.Domain.Entities;
 using CMD.Appointment.Domain.Enums;
 using CMD.Appointment.Domain.IRepositories;
+using CMD.Appointment.Domain.Services;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 
@@ -12,12 +13,14 @@ namespace CMD.UnitTest
     {
         private Mock<IAppointmentRepo> _appointmentRepoMock;
         private AppointmentController _controller;
+        private IDateValidator _validator;
 
         [TestInitialize]
         public void Setup()
         {
+            _validator = new DateValidator();
             _appointmentRepoMock = new Mock<IAppointmentRepo>();
-            _controller = new AppointmentController(_appointmentRepoMock.Object);
+            _controller = new AppointmentController(_appointmentRepoMock.Object,_validator);
         }
 
         [TestMethod]

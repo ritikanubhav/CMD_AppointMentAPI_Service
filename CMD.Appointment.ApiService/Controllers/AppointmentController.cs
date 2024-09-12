@@ -60,7 +60,7 @@ namespace CMD.Appointment.ApiService.Controllers
             try
             {
                 await appointmentManager.CancelAppointment(id);
-                return NoContent(); // Returns HTTP 204 No Content
+                return Ok(messageService.GetMessage("CompletedCancellation")); // Returns HTTP 204 No Content
             }
             catch (Exception ex)
             {

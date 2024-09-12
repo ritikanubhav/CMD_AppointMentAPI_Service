@@ -52,9 +52,9 @@ namespace CMD.Appointment.ApiService.Controllers
         // PUT: api/Appointments/Cancel/{id}
         [HttpPut("Cancel/{id}")]
         [Consumes("appliation/json")]
-        [ProducesResponseType<AppointmentModel>(StatusCodes.Status201Created)]
         [ProducesResponseType<AppointmentModel>(StatusCodes.Status200OK)]
-        [ProducesResponseType<AppointmentModel>(StatusCodes.Status404NotFound)]
+        [ProducesResponseType<AppointmentModel>(StatusCodes.Status500InternalServerError)]
+
         public async Task<IActionResult> CancelAppointment(int id)
         {
             try

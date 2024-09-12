@@ -111,6 +111,11 @@ namespace CMD.Appointment.ApiService.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetAllAppointments([FromQuery] int pageNo=1, [FromQuery] int pageLimit=20)
         {
+            if (pageNo <= 0 || pageLimit <= 0 )
+            {
+                return BadRequest("Invalid pagination parameters."); // Return 400 Bad Request if pagination parameters are invalid
+            }
+
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState); // Return 400 Bad Request if the model state is invalid
@@ -180,21 +185,33 @@ namespace CMD.Appointment.ApiService.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> GetAppointmentById(int id)
+        public async Task<IActionResult> GetAppointmentById([FromRoute] int id)
         {
+            // Validate the ID
+            if (id <= 0)
+            {
+                return BadRequest("Invalid appointment ID. ID must be a positive integer."); // Return 400 Bad Request if the ID is invalid
+            }
+
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
-            var appointment = await appointmentRepo.GetAppointmentById(id);
-
-            if (appointment == null)
+            try
             {
-                return NotFound(); // Return 404 if not found
-            }
+                var appointment = await appointmentRepo.GetAppointmentById(id);
 
-            return Ok(appointment);
+                if (appointment == null)
+                {
+                    return NotFound(); // Return 404 if not found
+                }
+
+                return Ok(appointment);
+            }
+            catch
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while processing your request."); // Return 500 Internal Server Error if an exception occurs
+            }
         }
     }
-
 }

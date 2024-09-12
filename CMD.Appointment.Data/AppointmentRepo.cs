@@ -16,25 +16,16 @@ namespace CMD.Appointment.Data
     public class AppointmentRepo : IAppointmentRepo
     {
         private readonly AppointmentDbContext db;
-        private readonly IDateValidator dateValidator;
-        public AppointmentRepo(AppointmentDbContext db,IDateValidator dateValidator) 
+        public AppointmentRepo(AppointmentDbContext db) 
         {
             this.db = db;
-            this.dateValidator= dateValidator;
+            
         }
 
         public async Task AddAppointment(AppointmentModel appointmentModel)
         {
-            DateOnly date = appointmentModel.Date;
-            if (dateValidator.ValidateDate(date))
-            {
-                await db.Appointments.AddAsync(appointmentModel);
-                await db.SaveChangesAsync();
-            }
-            else
-            {
-                throw new NotValidDateException("Date Not Valid");
-            }
+            await db.Appointments.AddAsync(appointmentModel);
+            await db.SaveChangesAsync();
         }
         public async Task CancelAppointment(int id)
         {
@@ -108,17 +99,8 @@ namespace CMD.Appointment.Data
         public async Task UpdateAppointment(AppointmentModel appointmentModel)
         {
             DateOnly date = appointmentModel.Date;
-
-            //Validating Date before Updating
-            if(dateValidator.ValidateDate(date))
-            {
-                db.Appointments.Update(appointmentModel);
-                await db.SaveChangesAsync();
-            }
-            else
-            {
-                throw new NotValidDateException("Date not Valid");
-            }    
+            db.Appointments.Update(appointmentModel);
+            await db.SaveChangesAsync();              
         }
 
         public async Task<List<AppointmentModel>> GetAllAppointmentsByPatientID(int patientId, int pageNumber, int pageSize)

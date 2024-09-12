@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Client;
 using Microsoft.AspNetCore.OData.Query;
+using CMD.Appointment.Domain.Manager;
 
 namespace CMD.Appointment.ApiService.Controllers
 {
@@ -14,13 +15,11 @@ namespace CMD.Appointment.ApiService.Controllers
     [ApiController]
     public class AppointmentController : ControllerBase
     {
-        private readonly IAppointmentRepo appointmentRepo;
-        private readonly IDateValidator dateValidator;
+        private readonly IAppointmentManager appointmentManager;
 
-        public AppointmentController(IAppointmentRepo appointmentRepo,IDateValidator dateValidator)
+        public AppointmentController(IAppointmentRepo appointmentRepo,IAppointmentManager appointmentManager)
         {
-            this.appointmentRepo = appointmentRepo;
-            this.dateValidator= dateValidator;
+            this.appointmentManager = appointmentManager;
         }
 
         // POST: api/Appointments
@@ -30,15 +29,15 @@ namespace CMD.Appointment.ApiService.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]    
         public async Task<IActionResult> AddAppointment(AppointmentModel appointment)
         {
-            //Validating properties and date
-            if (!ModelState.IsValid || !dateValidator.ValidateDate(appointment.Date))
+            //Validating properties 
+            if (!ModelState.IsValid )
             {
                 return BadRequest(ModelState);
             }
             try
             {
-                await appointmentRepo.AddAppointment(appointment);
-                var locationUri = $"/api/Appointments/{appointment.Id}";
+                await appointmentManager.CreateAppointment(appointment);
+                var locationUri = $"/api/Appointment/{appointment.Id}";
                 return Created(locationUri, appointment);
             }
             catch (Exception ex)
@@ -58,7 +57,7 @@ namespace CMD.Appointment.ApiService.Controllers
         {
             try
             {
-                await appointmentRepo.CancelAppointment(id);
+                await appointmentManager.CancelAppointment(id);
                 return NoContent(); // Returns HTTP 204 No Content
             }
             catch (Exception ex)
@@ -73,30 +72,35 @@ namespace CMD.Appointment.ApiService.Controllers
         [ProducesResponseType<AppointmentModel>(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> FilterAppointmentsByStatus(string status, int pageNumber = 1, int pageSize = 20)
         {
-            var result = await appointmentRepo.FilterAppointmentsByStatus(status,pageNumber,pageSize);
-
-            if (result == null || result.Count == 0)
-                return NotFound($"No appointments found with status: {status}");
-
-            return Ok(result);
-
+            try
+            {
+                var result = await appointmentManager.FilterAppointmentsByStatus(status, pageNumber, pageSize);
+                if (result == null || result.Count == 0)
+                    return NotFound($"No appointments found with status: {status}");
+                return Ok(result);
+            }
+            catch (Exception ex) 
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
-        //Put : api/appointments
+        //Put : api/appointments/{id}
         [HttpPut]
+        [Route("{id}")]
         [Consumes("application/json")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> UpdateAppointment(AppointmentModel appointment)
+        public async Task<IActionResult> UpdateAppointment(AppointmentModel appointmentData,int id)
         {
-            if(!ModelState.IsValid ||!dateValidator.ValidateDate(appointment.Date))
+            if(appointmentData==null || !ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
             try
             {
-                await appointmentRepo.UpdateAppointment(appointment);
-                return Ok(appointment);
+                await appointmentManager.UpdateAppointment(appointmentData,id);
+                return Ok(appointmentData);
             }
             catch (Exception ex)
             {
@@ -111,68 +115,93 @@ namespace CMD.Appointment.ApiService.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetAllAppointments([FromQuery] int pageNo=1, [FromQuery] int pageLimit=20)
         {
-            if (!ModelState.IsValid)
+            try
             {
-                return BadRequest(ModelState); // Return 400 Bad Request if the model state is invalid
+                var result = await appointmentManager.GetAllAppointments(pageNo, pageLimit);
+                if (result == null || result.Count == 0)
+                    return NotFound($"No appointments found");
+                return Ok(result);
             }
-
-            var appointments = await appointmentRepo.GetAllAppointments(pageNo, pageLimit);
-
-            if (appointments == null || appointments.Count() == 0)
+            catch (Exception ex)
             {
-                return NotFound("No appointments found."); // Return 404 if no appointments are found
+                return BadRequest(ex.Message);
             }
-
-            return Ok(appointments); // Return 200 OK with the list of appointments
         }
 
         [HttpGet("FilterByDate")]
+        [EnableQuery]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> FilterAppointmentsByDate(DateOnly date, int pageNumber = 1, int pageSize = 20)
         {
-            // Validate pagination parameters
-            if (pageNumber <= 0 || pageSize <= 0)
+            try
             {
-                return BadRequest("Page number and page size must be greater than zero.");
+                var result = await appointmentManager.FilterAppointmentsByDate(date, pageNumber, pageSize);
+
+                if (result == null || result.Count == 0)
+                {
+                    return NotFound("No appointments found for the specified date.");
+                }
+
+                return Ok(result);
+
             }
-
-            // Convert DateTime to DateOnly
-            var result = await appointmentRepo.FilterAppointmentsByDate(date, pageNumber, pageSize);
-
-            if (result == null || result.Count == 0)
+            catch(Exception ex)
             {
-                return NotFound("No appointments found for the specified date.");
+                return BadRequest(ex.Message);
             }
-
-            return Ok(result);
         }
 
         [HttpGet("active")]
+        [EnableQuery]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetActiveAppointments([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 20)
         {
-            var appointments = await appointmentRepo.GetActiveAppointments(pageNumber, pageSize);
-
-            // If no appointments are found, return 404 Not Found
-            if (appointments == null || appointments.Count == 0)
+            try
             {
-                return NotFound("No inactive appointments found.");
-            }
+                var appointments = await appointmentManager.GetActiveAppointments(pageNumber, pageSize);
 
-            return Ok(appointments);
+                // If no appointments are found, return 404 Not Found
+                if (appointments == null || appointments.Count == 0)
+                {
+                    return NotFound("No inactive appointments found.");
+                }
+
+                return Ok(appointments);
+            }
+            catch(Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
 
         [HttpGet("Inactive")]
+        [EnableQuery]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetInactiveAppointments([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 20)
         {
-            var appointments = await appointmentRepo.GetInactiveAppointments(pageNumber, pageSize);
-
-            // If no appointments are found, return 404 Not Found
-            if (appointments == null || appointments.Count == 0)
+            try
             {
-                return NotFound("No inactive appointments found.");
-            }
+                var appointments = await appointmentManager.GetInactiveAppointments(pageNumber, pageSize);
 
-            return Ok(appointments);
+                // If no appointments are found, return 404 Not Found
+                if (appointments == null || appointments.Count == 0)
+                {
+                    return NotFound("No inactive appointments found.");
+                }
+
+                return Ok(appointments);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         [HttpGet]
@@ -182,18 +211,74 @@ namespace CMD.Appointment.ApiService.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetAppointmentById(int id)
         {
-            if (!ModelState.IsValid)
+            try
             {
-                return BadRequest(ModelState);
-            }
-            var appointment = await appointmentRepo.GetAppointmentById(id);
+                var appointment = await appointmentManager.GetAppointmentById(id);
 
-            if (appointment == null)
+                if (appointment == null)
+                {
+                    return NotFound(); // Return 404 if not found
+                }
+
+                return Ok(appointment);
+            }
+            catch(Exception ex)
             {
-                return NotFound(); // Return 404 if not found
+                return BadRequest(ex.Message);
             }
+            
+        }
 
-            return Ok(appointment);
+        [HttpGet]
+        [Route("patient/{id}")]
+        [EnableQuery]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> GetAllAppointmentsByPatientId(int patientId,[FromQuery] int pageNo = 1, [FromQuery] int pageLimit = 20)
+        {
+            try
+            {
+                var appointments = await appointmentManager.GetAllAppointmentsByPatientID(patientId,pageNo, pageLimit);
+
+                if (appointments == null || appointments.Count() == 0)
+                {
+                    return NotFound("No appointments found."); // Return 404 if no appointments are found
+                }
+
+                return Ok(appointments); // Return 200 OK with the list of appointments
+
+            }
+            catch(Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpGet]
+        [Route("doctor/{id}")]
+        [EnableQuery]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> GetAllAppointmentsByDoctorId(int doctorId, [FromQuery] int pageNo = 1, [FromQuery] int pageLimit = 20)
+        {
+            try
+            {
+                var appointments = await appointmentManager.GetAllAppointmentsByDoctorID(doctorId, pageNo, pageLimit);
+
+                if (appointments == null || appointments.Count() == 0)
+                {
+                    return NotFound("No appointments found."); // Return 404 if no appointments are found
+                }
+
+                return Ok(appointments); // Return 200 OK with the list of appointments
+
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
     }
 

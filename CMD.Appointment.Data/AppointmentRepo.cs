@@ -75,7 +75,6 @@ namespace CMD.Appointment.Data
                 .Skip((pageNumber-1)*pageSize)
                 .Take(pageSize)
                 .ToListAsync();
-
         }
 
         public async Task<List<AppointmentModel>> GetActiveAppointments(int pageNumber = 1, int pageSize = 10)
@@ -122,5 +121,22 @@ namespace CMD.Appointment.Data
             }    
         }
 
+        public async Task<List<AppointmentModel>> GetAllAppointmentsByPatientID(int patientId, int pageNumber, int pageSize)
+        {
+            var pagedAppointments = await db.Appointments.Where(a=>a.PatientId==patientId)
+                                         .Skip((pageNumber - 1) * pageSize)
+                                         .Take(pageSize)
+                                         .ToListAsync();
+            return pagedAppointments;
+        }
+
+        public async Task<List<AppointmentModel>> GetAllAppointmentsByDoctorID(int doctorId, int pageNumber, int pageSize)
+        {
+            var pagedAppointments = await db.Appointments.Where(a => a.DoctorId == doctorId)
+                                         .Skip((pageNumber - 1) * pageSize)
+                                         .Take(pageSize)
+                                         .ToListAsync();
+            return pagedAppointments;
+        }
     }
 }

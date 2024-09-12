@@ -18,5 +18,7 @@ namespace CMD.Appointment.Domain.IRepositories
         public Task<List<AppointmentModel>> FilterAppointmentsByDate(DateOnly date, int pageNumber, int pageSize);
         public Task<List<AppointmentModel>> FilterAppointmentsByStatus(string status,int pageNumber,int pageSize);
         public Task CancelAppointment(int id);
+        public Task<List<AppointmentModel>> GetAllAppointmentsByPatientID(int patientId,int pageNumber, int pageSize);
+        public Task<List<AppointmentModel>> GetAllAppointmentsByDoctorID(int doctorId,int pageNumber, int pageSize);
     }
 }

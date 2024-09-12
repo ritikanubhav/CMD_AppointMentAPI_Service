@@ -3,6 +3,7 @@ using System.Text;
 
 using CMD.Appointment.Data;
 using CMD.Appointment.Domain.IRepositories;
+using CMD.Appointment.Domain.Manager;
 using CMD.Appointment.Domain.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -63,11 +64,11 @@ namespace CMD.Appointment.ApiService
             //add depencies to inject
             builder.Services.AddTransient<AppointmentDbContext>();
             builder.Services.AddTransient<IAppointmentRepo,AppointmentRepo>();
-            builder.Services.AddTransient<IDateValidator,DateValidator>();
+            builder.Services.AddTransient<IAppointmentManager,AppointmentManager>();
 
             var app = builder.Build();
 
-            // Configure Migration for Database programatically
+            //Configure Migration for Database programatically
             //try
             //{
             //    using (var scope = app.Services.CreateScope())
@@ -82,7 +83,7 @@ namespace CMD.Appointment.ApiService
             //    throw new Exception($"An error occurred while migrating the database: {ex.Message}", ex);
             //}
 
-            
+
             app.UseSwagger();
             app.UseSwaggerUI();
 

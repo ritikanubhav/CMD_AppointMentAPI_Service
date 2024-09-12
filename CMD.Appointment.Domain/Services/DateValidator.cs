@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace CMD.Appointment.Domain.Services
 {
-    public class DateValidator : IDateValidator
+    public static class DateValidator 
     {
-        public bool ValidateDate(DateOnly date)
+        public static bool ValidateDate(DateOnly date)
         {
             DateOnly today = DateOnly.FromDateTime(DateTime.Now);
             DateOnly maxDate = today.AddDays(30);

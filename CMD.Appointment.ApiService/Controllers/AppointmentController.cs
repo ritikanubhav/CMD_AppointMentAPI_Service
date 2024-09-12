@@ -71,6 +71,7 @@ namespace CMD.Appointment.ApiService.Controllers
         [HttpGet("FilterByStatus")]
         [ProducesResponseType<AppointmentModel>(StatusCodes.Status200OK)]
         [ProducesResponseType<AppointmentModel>(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType<AppointmentModel>(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> FilterAppointmentsByStatus(string status, int pageNumber = 1, int pageSize = 20)
         {
             try

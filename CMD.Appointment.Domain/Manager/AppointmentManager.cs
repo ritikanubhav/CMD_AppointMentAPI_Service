@@ -16,28 +16,45 @@ namespace CMD.Appointment.Domain.Manager
     public class AppointmentManager : IAppointmentManager
     {
         private IAppointmentRepo appointmentRepo;
+        private IMessageService messageService;
+        public AppointmentManager(IAppointmentRepo appointmentRepo,IMessageService messageService) 
         private readonly IMapper mapper;
         public AppointmentManager(IAppointmentRepo appointmentRepo,IMapper mapper) 
         { 
             this.appointmentRepo=appointmentRepo;
+            this.messageService=messageService;
             this.mapper=mapper;
         }
 
-        public async Task CancelAppointment(int id)
+        public async Task CancelAppointment(int appointmentId)
         {
-            var appointment= await appointmentRepo.GetAppointmentById(id);
-            if(appointment.Status == AppointmentStatus.CANCELLED)
+            var appointment = await appointmentRepo.GetAppointmentById(appointmentId);
+            if (appointment == null)
             {
-                throw new Exception("Already Cancelled Before");
+                throw new Exception($"There is no appointment witht the appointmentId {appointmentId}");
             }
-            await appointmentRepo.CancelAppointment(id);
+
+            //if the record exists and its status should be SCHEDULED
+            if (appointment != null)
+            {
+                if (appointment.Status != AppointmentStatus.SCHEDULED)
+                {
+                    throw new BusinessException(messageService.GetMessage("CompletedAppointmentCancellation"));
+                }
+                if ((appointment.Date.ToDateTime(appointment.Time) - DateTime.Now).TotalHours < 24)
+                {
+                    throw new AppointmentUnableToCancelException(messageService.GetMessage("TwentyFourHoursPolicy"));
+                }
+
+                await appointmentRepo.CancelAppointment(appointmentId);
+            }
         }
 
         public async Task CreateAppointment(AppointmentModel appointment)
         {
             if(!DateValidator.ValidateDate(appointment.Date))
             {
-                throw new InvalidDataException("Not valid date");
+                throw new InvalidDataException(messageService.GetMessage("InvalidAppointment"));
             }
             await appointmentRepo.AddAppointment(appointment);
         }
@@ -46,11 +63,11 @@ namespace CMD.Appointment.Domain.Manager
         {
             if (!PaginationValidator.ValidatePagination(pageNumber,pageSize))
             {
-                throw new NotValidPaginationException("Page Size and Page Limit not Valid");
+                throw new NotValidPaginationException(messageService.GetMessage("InvalidPagination"));
             }
             if(!DateValidator.ValidateDate(date))
             {
-                throw new NotValidDateException("Not valid date");
+                throw new NotValidDateException(messageService.GetMessage("InvalidDate"));
             }
             var filteredAppointments = await appointmentRepo.FilterAppointmentsByDate(date, pageNumber, pageSize);
             return filteredAppointments;
@@ -60,7 +77,7 @@ namespace CMD.Appointment.Domain.Manager
         {
             if (!PaginationValidator.ValidatePagination(pageNumber, pageSize))
             {
-                throw new NotValidPaginationException("Page Size and Page Limit not Valid");
+                throw new NotValidPaginationException(messageService.GetMessage("InvalidPagination"));
             }
             var filteredAppointments = await appointmentRepo.FilterAppointmentsByStatus(status, pageNumber, pageSize);
             return filteredAppointments;
@@ -70,7 +87,7 @@ namespace CMD.Appointment.Domain.Manager
         {
             if (!PaginationValidator.ValidatePagination(pageNumber, pageSize))
             {
-                throw new NotValidPaginationException("Page Size and Page Limit not Valid");
+                throw new NotValidPaginationException(messageService.GetMessage("InvalidPagination"));
             }
             var filteredAppointments = await appointmentRepo.GetActiveAppointments(pageNumber, pageSize);
             return filteredAppointments;
@@ -80,7 +97,7 @@ namespace CMD.Appointment.Domain.Manager
         {
             if (!PaginationValidator.ValidatePagination(pageNumber, pageSize))
             {
-                throw new NotValidPaginationException("Page Size and Page Limit not Valid");
+                throw new NotValidPaginationException(messageService.GetMessage("InvalidPagination"));
             }
             var filteredAppointments = await appointmentRepo.GetAllAppointments(pageNumber, pageSize);
             return filteredAppointments;
@@ -90,7 +107,7 @@ namespace CMD.Appointment.Domain.Manager
         {
             if (!PaginationValidator.ValidatePagination(pageNumber, pageSize))
             {
-                throw new NotValidPaginationException("Page Size and Page Limit not Valid");
+                throw new NotValidPaginationException(messageService.GetMessage("InvalidPagination"));
             }
             var filteredAppointments = await appointmentRepo.GetAllAppointmentsByDoctorID(doctorId,pageNumber, pageSize);
             return filteredAppointments;
@@ -100,7 +117,7 @@ namespace CMD.Appointment.Domain.Manager
         {
             if (!PaginationValidator.ValidatePagination(pageNumber, pageSize))
             {
-                throw new NotValidPaginationException("Page Size and Page Limit not Valid");
+                throw new NotValidPaginationException(messageService.GetMessage("InvalidPagination"));
             }
             var filteredAppointments = await appointmentRepo.GetAllAppointmentsByPatientID(patientId, pageNumber, pageSize);
             return filteredAppointments;
@@ -111,7 +128,7 @@ namespace CMD.Appointment.Domain.Manager
             var appointment=appointmentRepo.GetAppointmentById(id);
             if(appointment == null)
             {
-                throw new NotFoundException("No Appointment found");
+                throw new NotFoundException(messageService.GetMessage("InvalidAppointment"));
             }
             return appointment;
         }
@@ -120,7 +137,7 @@ namespace CMD.Appointment.Domain.Manager
         {
             if (!PaginationValidator.ValidatePagination(pageNumber, pageSize))
             {
-                throw new NotValidPaginationException("Page Size and Page Limit not Valid");
+                throw new NotValidPaginationException(messageService.GetMessage("InvalidPagination"));
             }
             var filteredAppointments = await appointmentRepo.GetInactiveAppointments(pageNumber, pageSize);
             return filteredAppointments;
@@ -132,7 +149,7 @@ namespace CMD.Appointment.Domain.Manager
             var appointment = await appointmentRepo.GetAppointmentById(id);
             if (appointment == null)
             {
-                throw new NotFoundException($"Appointment with Id = {id} not found.");
+                throw new NotFoundException(messageService.GetMessage("InvalidAppointment"));
             }
             if (!DateValidator.ValidateDate(appointmentData.Date))
             {

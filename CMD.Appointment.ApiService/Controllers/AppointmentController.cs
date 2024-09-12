@@ -16,10 +16,12 @@ namespace CMD.Appointment.ApiService.Controllers
     public class AppointmentController : ControllerBase
     {
         private readonly IAppointmentManager appointmentManager;
+        private readonly IMessageService messageService;
 
-        public AppointmentController(IAppointmentRepo appointmentRepo,IAppointmentManager appointmentManager)
+        public AppointmentController(IAppointmentManager appointmentManager,IMessageService messageService)
         {
             this.appointmentManager = appointmentManager;
+            this.messageService = messageService;
         }
 
         // POST: api/Appointments
@@ -78,9 +80,15 @@ namespace CMD.Appointment.ApiService.Controllers
                     return NotFound($"No appointments found with status: {status}");
                 return Ok(result);
             }
-            catch (Exception ex) 
+            catch (ArgumentException ex)
             {
-                return BadRequest(ex.Message);
+                // Handle invalid enum parsing
+                return BadRequest($"Invalid status value: '{status}'. Please provide a valid appointment status.");
+            }
+            catch (Exception ex)
+            {
+                // General exception handling
+                return BadRequest($"An error occurred while processing your request: {ex.Message}");
             }
         }
 
@@ -118,7 +126,7 @@ namespace CMD.Appointment.ApiService.Controllers
             {
                 var result = await appointmentManager.GetAllAppointments(pageNo, pageLimit);
                 if (result == null || result.Count == 0)
-                    return NotFound($"No appointments found");
+                    return NotFound(messageService.GetMessage("InvalidAppointment"));
                 return Ok(result);
             }
             catch (Exception ex)
@@ -140,7 +148,7 @@ namespace CMD.Appointment.ApiService.Controllers
 
                 if (result == null || result.Count == 0)
                 {
-                    return NotFound("No appointments found for the specified date.");
+                    return NotFound(messageService.GetMessage("NoAppointmentsForDate"));
                 }
                 return Ok(result);
 
@@ -191,7 +199,7 @@ namespace CMD.Appointment.ApiService.Controllers
                 // If no appointments are found, return 404 Not Found
                 if (appointments == null || appointments.Count == 0)
                 {
-                    return NotFound("No inactive appointments found.");
+                    return NotFound(messageService.GetMessage("NoInActiveAppointments"));
                 }
 
                 return Ok(appointments);
@@ -241,7 +249,7 @@ namespace CMD.Appointment.ApiService.Controllers
 
                 if (appointments == null || appointments.Count() == 0)
                 {
-                    return NotFound("No appointments found."); // Return 404 if no appointments are found
+                    return NotFound(messageService.GetMessage("NoAppointmentsForPatientId")); // Return 404 if no appointments are found
                 }
 
                 return Ok(appointments); // Return 200 OK with the list of appointments
@@ -267,7 +275,7 @@ namespace CMD.Appointment.ApiService.Controllers
 
                 if (appointments == null || appointments.Count() == 0)
                 {
-                    return NotFound("No appointments found."); // Return 404 if no appointments are found
+                    return NotFound(messageService.GetMessage("NoAppointmentsForDoctorId")); // Return 404 if no appointments are found
                 }
 
                 return Ok(appointments); // Return 200 OK with the list of appointments

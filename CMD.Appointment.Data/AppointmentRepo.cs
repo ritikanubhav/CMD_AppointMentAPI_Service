@@ -59,7 +59,13 @@ namespace CMD.Appointment.Data
         public async Task<List<AppointmentModel>> FilterAppointmentsByStatus(string status, int pageNumber, int pageSize)
         {
             // Parse the string to enum, and EF will match the int values in the database
-            var statusEnum = (AppointmentStatus)Enum.Parse(typeof(AppointmentStatus), status, true);
+            //var statusEnum = (AppointmentStatus)Enum.Parse(typeof(AppointmentStatus), status, true);
+            AppointmentStatus statusEnum;
+            if (!Enum.TryParse(typeof(AppointmentStatus), status, true, out object parsedStatus))
+            {
+                throw new ArgumentException($"{status} is not valid");
+            }
+            statusEnum = (AppointmentStatus)parsedStatus;
 
             return await db.Appointments
                 .Where(a => a.Status == statusEnum)

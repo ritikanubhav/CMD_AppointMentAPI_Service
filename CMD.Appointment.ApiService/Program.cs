@@ -65,6 +65,7 @@ namespace CMD.Appointment.ApiService
             builder.Services.AddTransient<AppointmentDbContext>();
             builder.Services.AddTransient<IAppointmentRepo,AppointmentRepo>();
             builder.Services.AddTransient<IAppointmentManager,AppointmentManager>();
+            builder.Services.AddTransient<IMessageService, MessageService>();
 
             builder.Services.AddAutoMapper(typeof(AppointmentMappingProfile));
 

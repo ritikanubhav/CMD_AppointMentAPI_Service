@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ExceptionMessages>
+	<Message key="InvalidAppointment">The appointment details are invalid.</Message>
+	<Message key="DoctorConflict">The doctor already has an appointment scheduled for this time.</Message>
+	<Message key="AppointmentNotFound">The appointment with the specified ID was not found.</Message>
+	<Message key="CompletedAppointmentCancellation">Cannot cancel an appointment already cancelled or closed.</Message>
+	<Message key="TwentyFourHoursPolicy">Appointments cannot be canceled less than 24 hours before the scheduled time. Please contact support for further assistance.</Message>
+	<Message key="InvalidStatus">The provided status is invalid.</Message>
+	<Message key="InvalidDate">The provided date is invalid.</Message>
+	<Message key="InvalidPagination">The provided pagination is invalid.</Message>
+	<Message key="NoAppointmentsForDate">No appoinments found for the date you provided.</Message>
+	<Message key="NoActiveAppointments">All appoinments are closed. </Message>
+	<Message key="NoInActiveAppointments">All appoinments are scheduled. No inactive appointments found </Message>
+	<Message key="NoAppointmentsForPatientId"> No appointments found for the provided patient ID. </Message>
+	<Message key="NoAppointmentsForDoctorId"> No appointments found for the provided Doctor ID. </Message>
+</ExceptionMessages>
+

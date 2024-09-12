@@ -17,9 +17,8 @@ namespace CMD.Appointment.Domain.Manager
     {
         private IAppointmentRepo appointmentRepo;
         private IMessageService messageService;
-        public AppointmentManager(IAppointmentRepo appointmentRepo,IMessageService messageService) 
         private readonly IMapper mapper;
-        public AppointmentManager(IAppointmentRepo appointmentRepo,IMapper mapper) 
+        public AppointmentManager(IAppointmentRepo appointmentRepo,IMapper mapper, IMessageService messageService) 
         { 
             this.appointmentRepo=appointmentRepo;
             this.messageService=messageService;

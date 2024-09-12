@@ -5,6 +5,7 @@ using CMD.Appointment.Data;
 using CMD.Appointment.Domain;
 using CMD.Appointment.Domain.IRepositories;
 using CMD.Appointment.Domain.Manager;
+using CMD.Appointment.Domain.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;

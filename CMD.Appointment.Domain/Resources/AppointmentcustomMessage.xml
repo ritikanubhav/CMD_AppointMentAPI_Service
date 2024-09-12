@@ -4,6 +4,7 @@
 	<Message key="DoctorConflict">The doctor already has an appointment scheduled for this time.</Message>
 	<Message key="AppointmentNotFound">The appointment with the specified ID was not found.</Message>
 	<Message key="CompletedAppointmentCancellation">Cannot cancel an appointment already cancelled or closed.</Message>
+	<Message key="CompletedCancellation">Successfully cancelled the appointment.</Message>
 	<Message key="TwentyFourHoursPolicy">Appointments cannot be canceled less than 24 hours before the scheduled time. Please contact support for further assistance.</Message>
 	<Message key="InvalidStatus">The provided status is invalid.</Message>
 	<Message key="InvalidDate">The provided date is invalid.</Message>

@@ -67,7 +67,6 @@ namespace CMD.Appointment.ApiService.Controllers
         }
 
         [HttpGet("FilterByStatus")]
-        [Consumes("application/json")]
         [ProducesResponseType<AppointmentModel>(StatusCodes.Status200OK)]
         [ProducesResponseType<AppointmentModel>(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> FilterAppointmentsByStatus(string status, int pageNumber = 1, int pageSize = 20)
@@ -91,9 +90,9 @@ namespace CMD.Appointment.ApiService.Controllers
         [Consumes("application/json")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> UpdateAppointment(AppointmentModel appointmentData,int id)
+        public async Task<IActionResult> UpdateAppointment([FromBody] AppointmentModel appointmentData,int id)
         {
-            if(appointmentData==null || !ModelState.IsValid)
+            if(!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
@@ -103,7 +102,7 @@ namespace CMD.Appointment.ApiService.Controllers
                 return Ok(appointmentData);
             }
             catch (Exception ex)
-            {
+            { 
                 return BadRequest(ex.Message);
             }
         }
@@ -143,7 +142,6 @@ namespace CMD.Appointment.ApiService.Controllers
                 {
                     return NotFound("No appointments found for the specified date.");
                 }
-
                 return Ok(result);
 
             }
@@ -167,7 +165,7 @@ namespace CMD.Appointment.ApiService.Controllers
                 // If no appointments are found, return 404 Not Found
                 if (appointments == null || appointments.Count == 0)
                 {
-                    return NotFound("No inactive appointments found.");
+                    return NotFound("No active appointments found.");
                 }
 
                 return Ok(appointments);
@@ -235,11 +233,11 @@ namespace CMD.Appointment.ApiService.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> GetAllAppointmentsByPatientId(int patientId,[FromQuery] int pageNo = 1, [FromQuery] int pageLimit = 20)
+        public async Task<IActionResult> GetAllAppointmentsByPatientId( int id,[FromQuery] int pageNo = 1, [FromQuery] int pageLimit = 20)
         {
             try
             {
-                var appointments = await appointmentManager.GetAllAppointmentsByPatientID(patientId,pageNo, pageLimit);
+                var appointments = await appointmentManager.GetAllAppointmentsByPatientID(id,pageNo, pageLimit);
 
                 if (appointments == null || appointments.Count() == 0)
                 {
@@ -261,11 +259,11 @@ namespace CMD.Appointment.ApiService.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> GetAllAppointmentsByDoctorId(int doctorId, [FromQuery] int pageNo = 1, [FromQuery] int pageLimit = 20)
+        public async Task<IActionResult> GetAllAppointmentsByDoctorId(int id, [FromQuery] int pageNo = 1, [FromQuery] int pageLimit = 20)
         {
             try
             {
-                var appointments = await appointmentManager.GetAllAppointmentsByDoctorID(doctorId, pageNo, pageLimit);
+                var appointments = await appointmentManager.GetAllAppointmentsByDoctorID(id, pageNo, pageLimit);
 
                 if (appointments == null || appointments.Count() == 0)
                 {

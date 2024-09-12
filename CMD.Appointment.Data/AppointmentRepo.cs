@@ -98,7 +98,6 @@ namespace CMD.Appointment.Data
         }
         public async Task UpdateAppointment(AppointmentModel appointmentModel)
         {
-            DateOnly date = appointmentModel.Date;
             db.Appointments.Update(appointmentModel);
             await db.SaveChangesAsync();              
         }

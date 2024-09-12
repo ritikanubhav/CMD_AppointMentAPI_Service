@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using AutoMapper;
 using CMD.Appointment.Domain.Entities;
 using CMD.Appointment.Domain.Enums;
 using CMD.Appointment.Domain.Exceptions;
@@ -15,9 +16,11 @@ namespace CMD.Appointment.Domain.Manager
     public class AppointmentManager : IAppointmentManager
     {
         private IAppointmentRepo appointmentRepo;
-        public AppointmentManager(IAppointmentRepo appointmentRepo) 
+        private readonly IMapper mapper;
+        public AppointmentManager(IAppointmentRepo appointmentRepo,IMapper mapper) 
         { 
             this.appointmentRepo=appointmentRepo;
+            this.mapper=mapper;
         }
 
         public async Task CancelAppointment(int id)
@@ -125,18 +128,20 @@ namespace CMD.Appointment.Domain.Manager
 
         public async Task UpdateAppointment(AppointmentModel appointmentData,int id)
         {
-            var appointment=appointmentRepo.GetAppointmentById(id);
-            if(appointment==null ||appointment.Id!=id)
+            // Check if the appointment exists
+            var appointment = await appointmentRepo.GetAppointmentById(id);
+            if (appointment == null)
             {
-                throw new NotFoundException("Not such Appointment");
+                throw new NotFoundException($"Appointment with Id = {id} not found.");
             }
-            if (DateValidator.ValidateDate(appointmentData.Date))
+            if (!DateValidator.ValidateDate(appointmentData.Date))
             {
-                await appointmentRepo.UpdateAppointment(appointmentData);
+                throw new InvalidDataException("Not valid date");
             }
             else
             {
-                throw new InvalidDataException("Not valid date");
+                mapper.Map(appointmentData,appointment);
+                await appointmentRepo.UpdateAppointment(appointment);
             }
         }
     }

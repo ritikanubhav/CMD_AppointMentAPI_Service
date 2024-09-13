@@ -16,7 +16,6 @@ namespace CMD.Appointment.Domain
             // Map from Appointment to Appointment (self-mapping)
             CreateMap<AppointmentModel, AppointmentModel>();
             CreateMap<UpdateAppointmentDTO, AppointmentModel>();
-            CreateMap<AddAppointmentDTO, AppointmentModel>();
         }
     }
 }

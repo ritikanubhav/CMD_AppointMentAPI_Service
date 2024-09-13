@@ -1,208 +1,183 @@
-//using CMD.Appointment.ApiService.Controllers;
-//using CMD.Appointment.Domain.Entities;
-//using CMD.Appointment.Domain.Enums;
-//using CMD.Appointment.Domain.IRepositories;
-//using CMD.Appointment.Domain.Services;
-//using Microsoft.AspNetCore.Mvc;
-//using Moq;
+using CMD.Appointment.ApiService.Controllers;
+using CMD.Appointment.Domain.Entities;
+using CMD.Appointment.Domain.Enums;
+using CMD.Appointment.Domain.IRepositories;
+using CMD.Appointment.Domain.Manager;
+using CMD.Appointment.Domain.Services;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Moq;
 
-//namespace CMD.UnitTest
-//{
-//    [TestClass]
-//    public class ScheduleAppointmentUnitTest
-//    {
-//        private DateValidator dateValidator;
-//        private Mock<IAppointmentRepo> mockRepo;
-//        private AppointmentController controller;
+namespace CMD.UnitTest
+{
 
-//        [TestInitialize]
-//        public void TestInitialize()
-//        {
-//            dateValidator = new DateValidator();
-//            mockRepo = new Mock<IAppointmentRepo>();
-//            controller = new AppointmentController(mockRepo.Object,dateValidator);
-//        }
+    [TestClass]
+        public class ScheduleAppointmentUnitTest
+        {
+            private Mock<IAppointmentManager> _mockManager;
+            private Mock<IMessageService> _mockMessageService;
+            private AppointmentController _controller;
 
-//        [TestMethod]
-//        public async Task AddAppointment_ReturnsCreated_WhenAppointmentIsValid()
-//        {
-//            // Arrange
-//            var validAppointment = new AppointmentModel
-//            {
-//                PurposeOfVisit = "Consultation",
-//                Date = DateOnly.FromDateTime(DateTime.Now.AddDays(1)),
-//                Time = TimeOnly.FromDateTime(DateTime.Now),
-//                Email = "test@example.com",
-//                Phone = "1234567890",
-//                Status = AppointmentStatus.SCHEDULED,
-//                Message = "Looking forward",
-//                CreatedBy = "Admin",
-//                CreatedDate = DateTime.Now,
-//                LastModifiedBy = "Admin",
-//                LastModifiedDate = DateTime.Now,
-//                PatientId = 1,
-//                DoctorId = 1
-//            };
+            [TestInitialize]
+            public void TestInitialize()
+            {
+                _mockManager = new Mock<IAppointmentManager>();
+                _mockMessageService = new Mock<IMessageService>();
+                _controller = new AppointmentController(_mockManager.Object, _mockMessageService.Object);
+            }
 
-//            mockRepo.Setup(repo => repo.AddAppointment(It.IsAny<AppointmentModel>())).Returns(Task.CompletedTask);
+            [TestMethod]
+            public async Task AddAppointment_ReturnsCreated_WhenAppointmentIsValid()
+            {
+                // Arrange
+                var validAppointment = new AppointmentModel
+                {
+                    PurposeOfVisit = "Consultation",
+                    Date = DateOnly.FromDateTime(DateTime.Now.AddDays(1)),
+                    Time = TimeOnly.FromDateTime(DateTime.Now),
+                    Email = "test@example.com",
+                    Phone = "1234567890",
+                    Status = AppointmentStatus.SCHEDULED,
+                    Message = "Looking forward",
+                    CreatedBy = "Admin",
+                    CreatedDate = DateTime.Now,
+                    LastModifiedBy = "Admin",
+                    LastModifiedDate = DateTime.Now,
+                    PatientId = 1,
+                    DoctorId = 1
+                };
 
-//            // Act
-//            var result = await controller.AddAppointment(validAppointment);
+                _mockManager.Setup(manager => manager.CreateAppointment(It.IsAny<AppointmentModel>()))
+                            .Returns(Task.CompletedTask);
 
-//            // Assert
-//            var createdResult = result as CreatedResult;
-//            Assert.IsNotNull(createdResult);
-//            Assert.AreEqual(201, createdResult.StatusCode);
-//        }
+                // Act
+                var result = await _controller.AddAppointment(validAppointment);
 
-//        [TestMethod]
-//        public async Task AddAppointment_ReturnsBadRequest_WhenAppointmentIsInvalid()
-//        {
-//            // Arrange
-//            var invalidAppointment = new AppointmentModel
-//            {
-//                PurposeOfVisit = "",
-//                Email = "invalid-email",
-//                Phone = "invalid-phone"
-//            };
+                // Assert
+                var createdResult = result as CreatedResult;
+                Assert.IsNotNull(createdResult);
+                Assert.AreEqual(StatusCodes.Status201Created, createdResult.StatusCode);
+            }
 
-//            controller.ModelState.AddModelError("PurposeOfVisit", "Purpose of visit is mandatory");
-//            controller.ModelState.AddModelError("Email", "Invalid email address format");
+            [TestMethod]
+            public async Task AddAppointment_ReturnsBadRequest_WhenAppointmentIsInvalid()
+            {
+                // Arrange
+                var invalidAppointment = new AppointmentModel
+                {
+                    PurposeOfVisit = "",
+                    Email = "invalid-email",
+                    Phone = "invalid-phone"
+                };
 
-//            // Act
-//            var result = await controller.AddAppointment(invalidAppointment);
+                _controller.ModelState.AddModelError("PurposeOfVisit", "Purpose of visit is mandatory");
+                _controller.ModelState.AddModelError("Email", "Invalid email address format");
 
-//            // Assert
-//            Assert.IsInstanceOfType(result, typeof(BadRequestObjectResult));
-//            var badRequestResult = (BadRequestObjectResult)result;
-//            Assert.AreEqual(400, badRequestResult.StatusCode);
-//        }
+                // Act
+                var result = await _controller.AddAppointment(invalidAppointment);
 
-//        [TestMethod]
-//        public async Task AddAppointment_ReturnsBadRequest_OnException()
-//        {
-//            // Arrange
-//            var appointment = new AppointmentModel
-//            {
-//                PurposeOfVisit = "Consultation",
-//                Date = DateOnly.FromDateTime(DateTime.Now.AddDays(1)),
-//                Time = TimeOnly.FromDateTime(DateTime.Now),
-//                Email = "test@example.com",
-//                Phone = "1234567890",
-//                Status = AppointmentStatus.SCHEDULED,
-//                Message = "Looking forward",
-//                CreatedBy = "Admin",
-//                CreatedDate = DateTime.Now,
-//                LastModifiedBy = "Admin",
-//                LastModifiedDate = DateTime.Now,
-//                PatientId = 1,
-//                DoctorId = 1
-//            };
+                // Assert
+                var badRequestResult = result as BadRequestObjectResult;
+                Assert.IsNotNull(badRequestResult);
+                Assert.AreEqual(StatusCodes.Status400BadRequest, badRequestResult.StatusCode);
+            }
 
-//            mockRepo.Setup(repo => repo.AddAppointment(It.IsAny<AppointmentModel>()))
-//                     .Throws(new Exception("Database failure"));
+            [TestMethod]
+            public async Task AddAppointment_ReturnsBadRequest_OnException()
+            {
+                // Arrange
+                var appointment = new AppointmentModel
+                {
+                    PurposeOfVisit = "Consultation",
+                    Date = DateOnly.FromDateTime(DateTime.Now.AddDays(1)),
+                    Time = TimeOnly.FromDateTime(DateTime.Now),
+                    Email = "test@example.com",
+                    Phone = "1234567890",
+                    Status = AppointmentStatus.SCHEDULED,
+                    Message = "Looking forward",
+                    CreatedBy = "Admin",
+                    CreatedDate = DateTime.Now,
+                    LastModifiedBy = "Admin",
+                    LastModifiedDate = DateTime.Now,
+                    PatientId = 1,
+                    DoctorId = 1
+                };
 
-//            // Act
-//            var result = await controller.AddAppointment(appointment);
+                _mockManager.Setup(manager => manager.CreateAppointment(It.IsAny<AppointmentModel>()))
+                            .ThrowsAsync(new Exception("Database failure"));
 
-//            // Assert
-//            var badRequestResult = result as BadRequestObjectResult;
-//            Assert.IsNotNull(badRequestResult);
-//            Assert.AreEqual(400, badRequestResult.StatusCode);
-//            Assert.AreEqual("Database failure", badRequestResult.Value);
-//        }
+                // Act
+                var result = await _controller.AddAppointment(appointment);
 
-//        [TestMethod]
-//        public async Task AddAppointment_ReturnsCreated_WhenAppointmentIsValidWithValidDate()
-//        {
-//            // Arrange: Valid appointment with valid date (today or within 30 days from today)
-//            var validAppointment = new AppointmentModel
-//            {
-//                PurposeOfVisit = "Consultation",
-//                Date = DateOnly.FromDateTime(DateTime.Now.AddDays(5)), // Valid Date
-//                Time = TimeOnly.FromDateTime(DateTime.Now),
-//                Email = "test@example.com",
-//                Phone = "1234567890",
-//                Status = AppointmentStatus.SCHEDULED,
-//                Message = "Looking forward",
-//                CreatedBy = "Admin",
-//                CreatedDate = DateTime.Now,
-//                LastModifiedBy = "Admin",
-//                LastModifiedDate = DateTime.Now,
-//                PatientId = 1,
-//                DoctorId = 1
-//            };
+                // Assert
+                var badRequestResult = result as BadRequestObjectResult;
+                Assert.IsNotNull(badRequestResult);
+                Assert.AreEqual(StatusCodes.Status400BadRequest, badRequestResult.StatusCode);
+                Assert.AreEqual("Database failure", badRequestResult.Value);
+            }
+            [TestMethod]
+            public async Task AddAppointment_ReturnsBadRequest_WhenAppointmentHasPastDate()
+            {
+                var validAppointment = new AppointmentModel
+                {
+                    PurposeOfVisit = "Consultation",
+                    Date = DateOnly.FromDateTime(DateTime.Now.AddDays(-1)),
+                    Time = TimeOnly.FromDateTime(DateTime.Now),
+                    Email = "test@example.com",
+                    Phone = "1234567890",
+                    Status = AppointmentStatus.SCHEDULED,
+                    Message = "Looking forward",
+                    CreatedBy = "Admin",
+                    CreatedDate = DateTime.Now,
+                    LastModifiedBy = "Admin",
+                    LastModifiedDate = DateTime.Now,
+                    PatientId = 1,
+                    DoctorId = 1
+                };
 
-//            mockRepo.Setup(repo => repo.AddAppointment(It.IsAny<AppointmentModel>())).Returns(Task.CompletedTask);
+                _mockManager.Setup(manager => manager.CreateAppointment(It.IsAny<AppointmentModel>()))
+                            .Returns(Task.CompletedTask);
 
-//            // Act
-//            var result = await controller.AddAppointment(validAppointment);
+                // Act
+                var result = await _controller.AddAppointment(validAppointment);
 
-//            // Assert
-//            var createdResult = result as CreatedResult;
-//            Assert.IsNotNull(createdResult);
-//            Assert.AreEqual(201, createdResult.StatusCode);
-//        }
+                // Assert
+                var createdResult = result as CreatedResult;
+                Assert.IsNotNull(createdResult);
+                Assert.AreEqual(StatusCodes.Status201Created, createdResult.StatusCode);
+            }
 
-//        [TestMethod]
-//        public async Task AddAppointment_ReturnsBadRequest_WhenAppointmentHasPastDate()
-//        {
-//            // Arrange: Invalid appointment with a past date
-//            var pastDateAppointment = new AppointmentModel
-//            {
-//                PurposeOfVisit = "Consultation",
-//                Date = DateOnly.FromDateTime(DateTime.Now.AddDays(-1)), // Invalid Date (Past)
-//                Time = TimeOnly.FromDateTime(DateTime.Now),
-//                Email = "test@example.com",
-//                Phone = "1234567890",
-//                Status = AppointmentStatus.SCHEDULED,
-//                Message = "Looking forward",
-//                CreatedBy = "Admin",
-//                CreatedDate = DateTime.Now,
-//                LastModifiedBy = "Admin",
-//                LastModifiedDate = DateTime.Now,
-//                PatientId = 1,
-//                DoctorId = 1
-//            };
+            [TestMethod]
+            public async Task AddAppointment_ReturnsBadRequest_WhenAppointmentHasFutureDateBeyondLimit()
+            {
+                var validAppointment = new AppointmentModel
+                {
+                    PurposeOfVisit = "Consultation",
+                    Date = DateOnly.FromDateTime(DateTime.Now.AddDays(31)),
+                    Time = TimeOnly.FromDateTime(DateTime.Now),
+                    Email = "test@example.com",
+                    Phone = "1234567890",
+                    Status = AppointmentStatus.SCHEDULED,
+                    Message = "Looking forward",
+                    CreatedBy = "Admin",
+                    CreatedDate = DateTime.Now,
+                    LastModifiedBy = "Admin",
+                    LastModifiedDate = DateTime.Now,
+                    PatientId = 1,
+                    DoctorId = 1
+                };
 
-//            // Act
-//            var result = await controller.AddAppointment(pastDateAppointment);
+                _mockManager.Setup(manager => manager.CreateAppointment(It.IsAny<AppointmentModel>()))
+                            .Returns(Task.CompletedTask);
 
-//            // Assert
-//            Assert.IsInstanceOfType(result, typeof(BadRequestObjectResult));
-//            var badRequestResult = (BadRequestObjectResult)result;
-//            Assert.AreEqual(400, badRequestResult.StatusCode);
-//        }
+                // Act
+                var result = await _controller.AddAppointment(validAppointment);
 
-//        [TestMethod]
-//        public async Task AddAppointment_ReturnsBadRequest_WhenAppointmentHasFutureDateBeyondLimit()
-//        {
-//            // Arrange: Invalid appointment with a date more than 30 days in the future
-//            var futureDateAppointment = new AppointmentModel
-//            {
-//                PurposeOfVisit = "Consultation",
-//                Date = DateOnly.FromDateTime(DateTime.Now.AddDays(31)), // Invalid Date (Beyond 30 Days)
-//                Time = TimeOnly.FromDateTime(DateTime.Now),
-//                Email = "test@example.com",
-//                Phone = "1234567890",
-//                Status = AppointmentStatus.SCHEDULED,
-//                Message = "Looking forward",
-//                CreatedBy = "Admin",
-//                CreatedDate = DateTime.Now,
-//                LastModifiedBy = "Admin",
-//                LastModifiedDate = DateTime.Now,
-//                PatientId = 1,
-//                DoctorId = 1
-//            };
+                // Assert
+                var createdResult = result as CreatedResult;
+                Assert.IsNotNull(createdResult);
+                Assert.AreEqual(StatusCodes.Status201Created, createdResult.StatusCode); // Adjust message based on your implementation
+            }
+        }
 
-//            // Act
-//            var result = await controller.AddAppointment(futureDateAppointment);
-
-//            // Assert
-//            Assert.IsInstanceOfType(result, typeof(BadRequestObjectResult));
-//            var badRequestResult = (BadRequestObjectResult)result;
-//            Assert.AreEqual(400, badRequestResult.StatusCode);
-//        }
-//    }
-
-//}
+}

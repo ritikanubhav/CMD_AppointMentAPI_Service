@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Client;
 using Microsoft.AspNetCore.OData.Query;
 using CMD.Appointment.Domain.Manager;
+using CMD.Appointment.Domain.Exceptions;
 using CMD.Appointment.Domain.DTO;
 
 namespace CMD.Appointment.ApiService.Controllers
@@ -62,6 +63,10 @@ namespace CMD.Appointment.ApiService.Controllers
             {
                 await appointmentManager.CancelAppointment(id);
                 return Ok(messageService.GetMessage("CompletedCancellation")); // Returns HTTP 204 No Content
+            }
+            catch (NotFoundException ex)
+            {
+                return NotFound(ex.Message); // HTTP 404 Not Found
             }
             catch (Exception ex)
             {

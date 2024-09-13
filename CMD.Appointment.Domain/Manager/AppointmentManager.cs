@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
+using CMD.Appointment.Domain.DTO;
 using CMD.Appointment.Domain.Entities;
 using CMD.Appointment.Domain.Enums;
 using CMD.Appointment.Domain.Exceptions;
@@ -54,6 +55,10 @@ namespace CMD.Appointment.Domain.Manager
             if(!DateValidator.ValidateDate(appointment.Date))
             {
                 throw new InvalidDataException(messageService.GetMessage("InvalidAppointment"));
+            }
+            if(!await PatientValidator.ValidatePatientIdAsync(appointment.PatientId))
+            {
+                throw new InvalidPatientIdException(messageService.GetMessage("InvalidPatientId"));
             }
             await appointmentRepo.AddAppointment(appointment);
         }
@@ -142,7 +147,7 @@ namespace CMD.Appointment.Domain.Manager
             return filteredAppointments;
         }
 
-        public async Task UpdateAppointment(AppointmentModel appointmentData,int id)
+        public async Task UpdateAppointment(UpdateAppointmentDTO appointmentData,int id)
         {
             // Check if the appointment exists
             var appointment = await appointmentRepo.GetAppointmentById(id);

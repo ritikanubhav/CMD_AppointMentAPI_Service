@@ -72,32 +72,16 @@ namespace CMD.Appointment.ApiService
 
             var app = builder.Build();
 
-            //Configure Migration for Database programatically
-            //try
-            //{
-            //    using (var scope = app.Services.CreateScope())
-            //    {
-            //        var db = scope.ServiceProvider.GetRequiredService<AppointmentDbContext>();
-            //        db.Database.Migrate();
-            //    }
-            //}
-            //catch (Exception ex)
-            //{
-            //    // Log or handle migration errors
-            //    throw new Exception($"An error occurred while migrating the database: {ex.Message}", ex);
-            //}
-
-
             app.UseSwagger();
             app.UseSwaggerUI();
 
             app.UseHttpsRedirection();
             app.UseCors("AllowSpecificOrigin");
+            
 
             app.UseAuthorization();
 
             app.MapControllers();
-
             app.Run();
         }
     }

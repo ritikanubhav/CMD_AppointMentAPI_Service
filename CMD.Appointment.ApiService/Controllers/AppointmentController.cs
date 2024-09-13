@@ -9,6 +9,7 @@ using Microsoft.Identity.Client;
 using Microsoft.AspNetCore.OData.Query;
 using CMD.Appointment.Domain.Manager;
 using CMD.Appointment.Domain.Exceptions;
+using CMD.Appointment.Domain.DTO;
 
 namespace CMD.Appointment.ApiService.Controllers
 {
@@ -104,7 +105,7 @@ namespace CMD.Appointment.ApiService.Controllers
         [Consumes("application/json")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> UpdateAppointment([FromBody] AppointmentModel appointmentData,int id)
+        public async Task<IActionResult> UpdateAppointment([FromBody] UpdateAppointmentDTO appointmentData,int id)
         {
             if(!ModelState.IsValid)
             {

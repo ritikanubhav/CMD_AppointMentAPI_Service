@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using CMD.Appointment.Domain.Enums;
+using CMD.Appointment.Domain.Services;
 
 namespace CMD.Appointment.Domain.Entities
 {
@@ -35,7 +36,7 @@ namespace CMD.Appointment.Domain.Entities
 
         // Phone: Must be a valid phone number format
         [Required(ErrorMessage = "Phone is mandatory.")]
-        [Phone(ErrorMessage = "Invalid phone number format.")]
+        [PhoneNumberValidator("91")]  // Validates phone number for India ("91")
         public string Phone { get; set; }
 
         // Status: Enum type with predefined values

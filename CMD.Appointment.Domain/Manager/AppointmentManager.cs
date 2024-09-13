@@ -60,6 +60,10 @@ namespace CMD.Appointment.Domain.Manager
             {
                 throw new InvalidPatientIdException(messageService.GetMessage("InvalidPatientId"));
             }
+            if (!await DoctorIdValidator.ValidateDoctorIdAsync(appointment.DoctorId))
+            {
+                throw new InvalidDoctorIdException(messageService.GetMessage("InvalidDoctorId"));
+            }
             await appointmentRepo.AddAppointment(appointment);
         }
 

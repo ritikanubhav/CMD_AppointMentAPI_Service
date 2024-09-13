@@ -8,10 +8,10 @@ namespace CMD.Appointment.Domain.Services
 {
     public class DoctorIdValidator
     {
-        
+
         private static readonly HttpClient HttpClient = new HttpClient
         {
-            BaseAddress = new Uri("https://cmdpatientmodulewebapp-d8b6hvgxesa8fmda.southeastasia-01.azurewebsites.net") L
+            BaseAddress = new Uri("https://cmd-doctor-api.azurewebsites.net")
         };
 
         /// <summary>
@@ -38,5 +38,5 @@ namespace CMD.Appointment.Domain.Services
             }
         }
     }
-    
+
 }

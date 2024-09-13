@@ -28,7 +28,7 @@ namespace CMD.Appointment.ApiService.Controllers
 
         // POST: api/Appointments
         [HttpPost]
-        [Consumes("application/json")]
+        //[Consumes("application/json")]
         [ProducesResponseType(StatusCodes.Status201Created)]    
         [ProducesResponseType(StatusCodes.Status400BadRequest)]    
         public async Task<IActionResult> AddAppointment(AppointmentModel appointment)

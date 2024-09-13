@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
+using CMD.Appointment.Domain.DTO;
 using CMD.Appointment.Domain.Entities;
 
 namespace CMD.Appointment.Domain
@@ -14,6 +15,8 @@ namespace CMD.Appointment.Domain
         {
             // Map from Appointment to Appointment (self-mapping)
             CreateMap<AppointmentModel, AppointmentModel>();
+            CreateMap<UpdateAppointmentDTO, AppointmentModel>();
+            CreateMap<AddAppointmentDTO, AppointmentModel>();
         }
     }
 }

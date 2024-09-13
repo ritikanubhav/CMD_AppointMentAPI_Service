@@ -1,129 +1,123 @@
-//using System;
-//using System.Collections.Generic;
-//using System.Threading.Tasks;
-//using Microsoft.AspNetCore.Mvc;
-//using Microsoft.VisualStudio.TestTools.UnitTesting;
-//using Moq;
-//using CMD.Appointment.ApiService.Controllers;
-//using CMD.Appointment.Domain.Entities;
-//using CMD.Appointment.Domain.Enums;
-//using CMD.Appointment.Domain.IRepositories;
-//using CMD.Appointment.Domain.Services;
-//using Microsoft.AspNetCore.Http;
+using System;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Moq;
+using CMD.Appointment.ApiService.Controllers;
+using CMD.Appointment.Domain.DTO;
+using CMD.Appointment.Domain.Services;
+using CMD.Appointment.Domain.Manager;
 
-//namespace CMD.Test
-//{
-//    [TestClass]
-//    public class GetAppointmentByStatus
-//    {
-//        private Mock<IAppointmentRepo> appointmentRepoMock;
-//        private Mock<IDateValidator> dateValidatorMock; // Assuming you have an interface for DateValidator
-//        private AppointmentController controller;
+namespace CMD.UnitTest
+{
+    [TestClass]
+    public class AppointmentControllerStatusTests
+    {
+        private Mock<IAppointmentManager> appointmentManagerMock;
+        private Mock<IMessageService> messageServiceMock;
+        private AppointmentController controller;
 
-//        [TestInitialize]
-//        public void Setup()
-//        {
-//            appointmentRepoMock = new Mock<IAppointmentRepo>();
-//            dateValidatorMock = new Mock<IDateValidator>(); // Initialize the mock for DateValidator
+        [TestInitialize]
+        public void Setup()
+        {
+            appointmentManagerMock = new Mock<IAppointmentManager>();
+            messageServiceMock = new Mock<IMessageService>(); // Create mock for IMessageService
 
-//            // Set up mock behavior for different scenarios
-//            appointmentRepoMock.Setup(repo => repo.FilterAppointmentsByStatus(AppointmentStatus.SCHEDULED.ToString(), It.IsAny<int>(), It.IsAny<int>()))
-//                                .ReturnsAsync(new List<AppointmentModel>
-//                                {
-//                                    new AppointmentModel
-//                                    {
-//                                        Id = 1,
-//                                        PurposeOfVisit = "Checkup",
-//                                        Date = DateOnly.FromDateTime(DateTime.Now),
-//                                        Time = TimeOnly.FromDateTime(DateTime.Now.AddHours(2)),
-//                                        Email = "patient1@example.com",
-//                                        Phone = "123-456-7890",
-//                                        Status = AppointmentStatus.SCHEDULED,
-//                                        Message = "General checkup",
-//                                        CreatedBy = "admin",
-//                                        CreatedDate = DateTime.Now,
-//                                        LastModifiedBy = "admin",
-//                                        LastModifiedDate = DateTime.Now,
-//                                        PatientId = 1,
-//                                        DoctorId = 1
-//                                    }
-//                                });
+            controller = new AppointmentController(appointmentManagerMock.Object, messageServiceMock.Object);
+        }
 
-//            appointmentRepoMock.Setup(repo => repo.FilterAppointmentsByStatus(AppointmentStatus.CANCELLED.ToString(), It.IsAny<int>(), It.IsAny<int>()))
-//                                .ReturnsAsync(new List<AppointmentModel>());
+        [TestMethod]
+        public async Task UpdateAppointment_ReturnsOkResult_WithValidData()
+        {
+            // Arrange
+            var appointmentData = new UpdateAppointmentDTO
+            {
+                PurposeOfVisit = "General Checkup",
+                Date = DateOnly.FromDateTime(DateTime.Today),
+                Time = TimeOnly.FromDateTime(DateTime.Now),
+                Email = "test@example.com",
+                Phone = "1234567890",
+                Message = "Looking forward to the appointment",
+                LastModifiedBy = "admin"
+            };
+            var id = 1;
 
-//            appointmentRepoMock.Setup(repo => repo.FilterAppointmentsByStatus(It.Is<string>(s => string.IsNullOrEmpty(s)), It.IsAny<int>(), It.IsAny<int>()))
-//                                .ReturnsAsync(new List<AppointmentModel>());
+            // Mock UpdateAppointment to complete successfully
+            appointmentManagerMock.Setup(manager => manager.UpdateAppointment(appointmentData, id))
+                .Returns(Task.CompletedTask);
 
-//            controller = new AppointmentController(appointmentRepoMock.Object, dateValidatorMock.Object);
-//        }
+            // Act
+            var result = await controller.UpdateAppointment(appointmentData, id);
 
-//        [TestMethod]
-//        public async Task FilterAppointmentsByStatus_ReturnsOk_WhenAppointmentsFound()
-//        {
-//            // Arrange
-//            var status = AppointmentStatus.SCHEDULED.ToString();
+            // Assert
+            Assert.IsInstanceOfType(result, typeof(OkObjectResult));
+            var okResult = result as OkObjectResult;
+            Assert.IsNotNull(okResult);
+            Assert.AreEqual(appointmentData, okResult.Value);
+        }
 
-//            // Act
-//            var result = await controller.FilterAppointmentsByStatus(status);
+        [TestMethod]
+        public async Task UpdateAppointment_ReturnsBadRequest_OnInvalidModelState()
+        {
+            // Arrange
+            controller.ModelState.AddModelError("PurposeOfVisit", "Required");
+            var appointmentData = new UpdateAppointmentDTO
+            {
+                Date = DateOnly.FromDateTime(DateTime.Today),
+                Time = TimeOnly.FromDateTime(DateTime.Now),
+                Email = "test@example.com",
+                Phone = "1234567890",
+                Message = "Looking forward to the appointment",
+                LastModifiedBy = "admin"
+            };
+            var id = 1;
 
-//            // Assert
-//            var okResult = result as OkObjectResult;
-//            Assert.IsNotNull(okResult);
-//            Assert.AreEqual(StatusCodes.Status200OK, okResult.StatusCode);
+            // Act
+            var result = await controller.UpdateAppointment(appointmentData, id);
 
-//            var resultAppointments = okResult.Value as List<AppointmentModel>;
-//            Assert.IsNotNull(resultAppointments);
-//            Assert.AreEqual(1, resultAppointments.Count);
-//            Assert.AreEqual(AppointmentStatus.SCHEDULED, resultAppointments[0].Status);
-//        }
+            // Assert
+            Assert.IsInstanceOfType(result, typeof(BadRequestObjectResult));
+            var badRequestResult = result as BadRequestObjectResult;
+            Assert.IsNotNull(badRequestResult);
 
-//        [TestMethod]
-//        public async Task FilterAppointmentsByStatus_ReturnsNotFound_WhenNoAppointmentsFound()
-//        {
-//            // Arrange
-//            var status = AppointmentStatus.CANCELLED.ToString();
+            // Verify that the result is a SerializableError
+            var serializableError = badRequestResult.Value as SerializableError;
+            Assert.IsNotNull(serializableError);
+            Assert.IsTrue(serializableError.ContainsKey("PurposeOfVisit"));
 
-//            // Act
-//            var result = await controller.FilterAppointmentsByStatus(status);
+            var errorMessages = serializableError["PurposeOfVisit"] as IEnumerable<string>;
+            Assert.IsNotNull(errorMessages);
+            Assert.AreEqual("Required", errorMessages.First());
+        }
 
-//            // Assert
-//            var notFoundResult = result as NotFoundObjectResult;
-//            Assert.IsNotNull(notFoundResult);
-//            Assert.AreEqual(StatusCodes.Status404NotFound, notFoundResult.StatusCode);
-//            Assert.AreEqual($"No appointments found with status: {status}", notFoundResult.Value);
-//        }
+        [TestMethod]
+        public async Task UpdateAppointment_ReturnsBadRequest_OnException()
+        {
+            // Arrange
+            var appointmentData = new UpdateAppointmentDTO
+            {
+                PurposeOfVisit = "General Checkup",
+                Date = DateOnly.FromDateTime(DateTime.Today),
+                Time = TimeOnly.FromDateTime(DateTime.Now),
+                Email = "test@example.com",
+                Phone = "1234567890",
+                Message = "Looking forward to the appointment",
+                LastModifiedBy = "admin"
+            };
+            var id = 1;
 
-//        [TestMethod]
-//        public async Task FilterAppointmentsByStatus_ReturnsNotFound_WhenStatusIsNull()
-//        {
-//            // Arrange
-//            string status = null;
+            // Mock UpdateAppointment to throw an exception
+            appointmentManagerMock.Setup(manager => manager.UpdateAppointment(appointmentData, id))
+                .ThrowsAsync(new Exception("Error updating appointment"));
 
-//            // Act
-//            var result = await controller.FilterAppointmentsByStatus(status);
+            // Act
+            var result = await controller.UpdateAppointment(appointmentData, id);
 
-//            // Assert
-//            var notFoundResult = result as NotFoundObjectResult;
-//            Assert.IsNotNull(notFoundResult);
-//            Assert.AreEqual(StatusCodes.Status404NotFound, notFoundResult.StatusCode);
-//            Assert.AreEqual($"No appointments found with status: {status}", notFoundResult.Value);
-//        }
-
-//        [TestMethod]
-//        public async Task FilterAppointmentsByStatus_ReturnsNotFound_OnInvalidStatus()
-//        {
-//            // Arrange
-//            string status = ""; // Empty status (could represent invalid input)
-
-//            // Act
-//            var result = await controller.FilterAppointmentsByStatus(status);
-
-//            // Assert
-//            var notFoundResult = result as NotFoundObjectResult;
-//            Assert.IsNotNull(notFoundResult);
-//            Assert.AreEqual(StatusCodes.Status404NotFound, notFoundResult.StatusCode);
-//            Assert.AreEqual($"No appointments found with status: {status}", notFoundResult.Value);
-//        }
-//    }
-//}
+            // Assert
+            Assert.IsInstanceOfType(result, typeof(BadRequestObjectResult));
+            var badRequestResult = result as BadRequestObjectResult;
+            Assert.IsNotNull(badRequestResult);
+            Assert.AreEqual("Error updating appointment", badRequestResult.Value);
+        }
+    }
+}

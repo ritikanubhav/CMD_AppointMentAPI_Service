@@ -14,5 +14,6 @@
 	<Message key="NoInActiveAppointments">All appoinments are scheduled. No inactive appointments found </Message>
 	<Message key="NoAppointmentsForPatientId"> No appointments found for the provided patient ID. </Message>
 	<Message key="NoAppointmentsForDoctorId"> No appointments found for the provided Doctor ID. </Message>
+	<Message key="InvalidPatientId"> no patient Registerd with this Patient Id </Message>
 </ExceptionMessages>
 

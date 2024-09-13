@@ -55,6 +55,10 @@ namespace CMD.Appointment.Domain.Manager
             {
                 throw new InvalidDataException(messageService.GetMessage("InvalidAppointment"));
             }
+            if(!await PatientValidator.ValidatePatientIdAsync(appointment.PatientId))
+            {
+                throw new InvalidPatientIdException(messageService.GetMessage("InvalidPatientId"));
+            }
             await appointmentRepo.AddAppointment(appointment);
         }
 
@@ -153,6 +157,10 @@ namespace CMD.Appointment.Domain.Manager
             if (!DateValidator.ValidateDate(appointmentData.Date))
             {
                 throw new InvalidDataException("Not valid date");
+            }
+            if (!await PatientValidator.ValidatePatientIdAsync(appointment.PatientId))
+            {
+                throw new InvalidPatientIdException(messageService.GetMessage("InvalidPatientId"));
             }
             else
             {

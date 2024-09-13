@@ -49,21 +49,19 @@ namespace CMD.Appointment.Domain.Entities
         [StringLength(255, MinimumLength = 1, ErrorMessage = "Message must be between 1 and 255 characters.")]
         public string Message { get; set; }
 
-        // CreatedBy: Must be a string and mandatory
-        [Required(ErrorMessage = "CreatedBy is mandatory.")]
-        public string CreatedBy { get; set; }
+        public string? CreatedBy { get; set; }
 
         // CreatedDate: Must be a datetime and mandatory
         [Required(ErrorMessage = "CreatedDate is mandatory.")]
-        public DateTime CreatedDate { get; set; }
+        public DateTime? CreatedDate { get; set; }= DateTime.Now;
 
         // LastModifiedBy: Must be a string and mandatory
         [Required(ErrorMessage = "LastModifiedBy is mandatory.")]
-        public string LastModifiedBy { get; set; }
+        public string? LastModifiedBy { get; set; }
 
         // LastModifiedDate: Must be a datetime and mandatory
         [Required(ErrorMessage = "LastModifiedDate is mandatory.")]
-        public DateTime LastModifiedDate { get; set; }
+        public DateTime? LastModifiedDate { get; set; }=DateTime.Now;
 
         // PatientId: Foreign Key to the Patient Entity, mandatory
         [Required(ErrorMessage = "PatientId is mandatory.")]

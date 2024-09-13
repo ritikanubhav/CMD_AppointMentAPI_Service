@@ -1,140 +1,94 @@
-//using CMD.Appointment.ApiService.Controllers;
-//using CMD.Appointment.Domain.Entities;
-//using CMD.Appointment.Domain.Enums;
-//using CMD.Appointment.Domain.IRepositories;
-//using CMD.Appointment.Domain.Manager;
-//using CMD.Appointment.Domain.Services;
-//using Microsoft.AspNetCore.Mvc;
-//using Moq;
+using System;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Moq;
+using CMD.Appointment.ApiService.Controllers;
+using CMD.Appointment.Domain.Manager;
+using CMD.Appointment.Domain.IRepositories;
+using CMD.Appointment.Domain.Entities;
+using CMD.Appointment.Domain.Services;
+using CMD.Appointment.Domain.Exceptions;
 
-//namespace CMD.UnitTest
-//{
-//    [TestClass]
-//    public class CancellationFeature
-//    {
-//        private Mock<IAppointmentRepo> _appointmentRepoMock;
-//        private AppointmentController _controller;
-//        private IAppointmentManager appointmentManager;
-//        [TestInitialize]
-//        public void Setup()
-//        {
-//            _appointmentRepoMock = new Mock<IAppointmentRepo>();
-//            _controller = new AppointmentController(_appointmentRepoMock.Object);
-//        }
+[TestClass]
+public class CancellationFeature
+{
+    private Mock<IAppointmentManager> _mockAppointmentManager;
+    private Mock<IMessageService> _mockMessageService;
+    private AppointmentController _controller;
 
-//        [TestMethod]
-//        public async Task CancelAppointment_ReturnsNoContent_WhenAppointmentFound()
-//        {
-//            // Arrange
-//            int appointmentId = 1;
-//            // Mock the method to simulate that the appointment exists
-//            _appointmentRepoMock.Setup(repo => repo.CancelAppointment(appointmentId))
-//                                .Callback(() =>
-//                                {
-//                                    // Simulate the appointment being found and updated
-//                                    var existingAppointment = new AppointmentModel
-//                                    {
-//                                        Id = appointmentId,
-//                                        Status = AppointmentStatus.SCHEDULED, // Initial status
-//                                        PurposeOfVisit = "Checkup",
-//                                        Date = DateOnly.FromDateTime(DateTime.Now),
-//                                        Time = TimeOnly.FromDateTime(DateTime.Now.AddHours(2)),
-//                                        Email = "patient1@example.com",
-//                                        Phone = "123-456-7890",
-//                                        Message = "General checkup",
-//                                        CreatedBy = "admin",
-//                                        CreatedDate = DateTime.Now,
-//                                        LastModifiedBy = "admin",
-//                                        LastModifiedDate = DateTime.Now,
-//                                        PatientId = 1,
-//                                        DoctorId = 1
-//                                    };
+    [TestInitialize]
+    public void Setup()
+    {
+        // Initialize mocks
+        _mockAppointmentManager = new Mock<IAppointmentManager>();
+        _mockMessageService = new Mock<IMessageService>();
 
-//                                    // Simulate status change
-//                                    existingAppointment.Status = AppointmentStatus.CANCELLED;
-//                                    existingAppointment.LastModifiedDate = DateTime.UtcNow;
-//                                })
-//                                .Returns(Task.CompletedTask);
+        // Initialize controller with mocks
+        _controller = new AppointmentController(_mockAppointmentManager.Object, _mockMessageService.Object);
+    }
 
-//            // Mock the method to return an appointment when it is canceled
-//            // Mock the CancelAppointment method to simulate success
-//            //_appointmentRepoMock.Setup(repo => repo.CancelAppointment(appointmentId))
-//            //                    .Returns(Task.CompletedTask);
+    [TestMethod]
+    public async Task CancelAppointment_ReturnsNoContent_OnValidId()
+    {
+        // Arrange
+        int appointmentId = 1;
 
-//            // Act
-//            var result = await _controller.CancelAppointment(appointmentId);
+        // Mock the manager method to simulate success
+        _mockAppointmentManager.Setup(m => m.CancelAppointment(appointmentId))
+            .Returns(Task.CompletedTask);
 
-//            // Assert
-//            var noContentResult = result as NoContentResult;
-//            Assert.IsNotNull(noContentResult, "Getting the null value");
-//            Assert.AreEqual(204, noContentResult.StatusCode);
+        // Mock message service response
+        _mockMessageService.Setup(m => m.GetMessage("CompletedCancellation"))
+            .Returns("Cancellation completed successfully");
 
-//            // Verify that the repository method was called with the correct id
-//            _appointmentRepoMock.Verify(repo => repo.CancelAppointment(appointmentId), Times.Once);
-//        }
+        // Act
+        var result = await _controller.CancelAppointment(appointmentId) as OkObjectResult;
 
-//        //[TestMethod]
-//        //public async Task CancelAppointment_ReturnsNotFound_WhenAppointmentNotFound()
-//        //{
-//        //    // Arrange
-//        //    int appointmentId = 999; // ID that does not exist
+        // Assert
+        Assert.IsNotNull(result, "Expected OkObjectResult but got null.");
+        Assert.AreEqual(StatusCodes.Status200OK, result.StatusCode, "Expected status code 200.");
+        Assert.AreEqual("Cancellation completed successfully", result.Value, "Expected success message did not match.");
 
-//        //    // Mock the method to simulate that no appointment is found
-//        //    _appointmentRepoMock.Setup(repo => repo.CancelAppointment(appointmentId))
-//        //                        .Callback(() =>
-//        //                        {
-//        //                            // Simulate the appointment being found and updated
-//        //                            var existingAppointment = new AppointmentModel
-//        //                            {
-//        //                                Id = appointmentId,
-//        //                                Status = AppointmentStatus.SCHEDULED, // Initial status
-//        //                                PurposeOfVisit = "Checkup",
-//        //                                Date = DateOnly.FromDateTime(DateTime.Now),
-//        //                                Time = TimeOnly.FromDateTime(DateTime.Now.AddHours(2)),
-//        //                                Email = "patient1@example.com",
-//        //                                Phone = "123-456-7890",
-//        //                                Message = "General checkup",
-//        //                                CreatedBy = "admin",
-//        //                                CreatedDate = DateTime.Now,
-//        //                                LastModifiedBy = "admin",
-//        //                                LastModifiedDate = DateTime.Now,
-//        //                                PatientId = 1,
-//        //                                DoctorId = 1
-//        //                            };
+        // Verify that the manager method was called with the correct id
+        _mockAppointmentManager.Verify(m => m.CancelAppointment(appointmentId), Times.Once);
+    }
 
-//        //                            // Simulate status change
-//        //                            existingAppointment.Status = AppointmentStatus.CANCELLED;
-//        //                            existingAppointment.LastModifiedDate = DateTime.UtcNow;
-//        //                        })
-//        //                        .Returns(Task.CompletedTask);
+    [TestMethod]
+    public async Task CancelAppointment_ReturnsNotFound_OnAppointmentNotFound()
+    {
+        // Arrange
+        int appointmentId = 1; // Valid ID but appointment not found
+        _mockAppointmentManager.Setup(m => m.CancelAppointment(It.IsAny<int>()))
+            .Throws(new NotFoundException("There is no appointment with the appointmentId 1"));
 
-//        //    // Act
-//        //    var result = await _controller.CancelAppointment(appointmentId);
+        // Act
+        var result = await _controller.CancelAppointment(appointmentId) as NotFoundObjectResult;
 
-//        //    // Assert
-//        //    var notFoundResult = result as NotFoundObjectResult;
-//        //    Assert.IsNotNull(notFoundResult, "Expected NotFoundObjectResult, but got null.");
-//        //    Assert.AreEqual(404, notFoundResult.StatusCode, "Expected status code 404, but got a different status code.");
-//        //    Assert.AreEqual("No appointment found with ID 999", notFoundResult.Value, "Expected NotFound message did not match.");
-//        //}
+        // Assert
+        Assert.IsNotNull(result, "Expected NotFoundObjectResult but got null.");
+        Assert.AreEqual(StatusCodes.Status404NotFound, result.StatusCode, "Expected status code 404.");
+        Assert.AreEqual("There is no appointment with the appointmentId 1", result.Value, "Expected error message did not match.");
+    }
 
 
-//    //    [TestMethod]
-//    //    public async Task CancelAppointment_ReturnsBadRequest_OnInvalidId()
-//    //    {
-//    //        // Arrange
-//    //        int appointmentId = -1; // Invalid ID
+    [TestMethod]
+    public async Task CancelAppointment_ReturnsBadRequest_OnInvalidId()
+    {
+        // Arrange
+        int appointmentId = -1; // Invalid ID
 
-//    //        // Act
-//    //        var result = await _controller.CancelAppointment(appointmentId);
+        // Mocking the exception thrown for invalid ID scenario
+        _mockAppointmentManager.Setup(m => m.CancelAppointment(It.IsAny<int>()))
+            .Throws(new ArgumentException("Invalid appointment ID"));
 
-//    //        // Assert
-//    //        var badRequestResult = result as BadRequestObjectResult;
-//    //        Assert.IsNotNull(badRequestResult, "Expected BadRequestObjectResult, but got null.");
-//    //        Assert.AreEqual(400, badRequestResult.StatusCode, "Expected status code 400, but got a different status code.");
-//    //        Assert.AreEqual("Invalid appointment ID", badRequestResult.Value, "Expected BadRequest message did not match.");
-//    //    }
+        // Act
+        var result = await _controller.CancelAppointment(appointmentId) as ObjectResult;
 
-
-//    }
-//}
+        // Assert
+        Assert.IsNotNull(result, "Expected ObjectResult but got null.");
+        Assert.AreEqual(StatusCodes.Status500InternalServerError, result.StatusCode, "Expected status code 500.");
+        Assert.AreEqual("Invalid appointment ID", result.Value, "Expected error message did not match.");
+    }
+}

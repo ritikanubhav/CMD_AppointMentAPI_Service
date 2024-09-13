@@ -36,6 +36,7 @@ namespace CMD.Appointment.Domain.Entities
         // Phone: Must be a valid phone number format
         [Required(ErrorMessage = "Phone is mandatory.")]
         [Phone(ErrorMessage = "Invalid phone number format.")]
+        [RegularExpression(@"^(\+91[\-\s]?)?[0]?(91)?[789]\d{9}$", ErrorMessage = "Phone number must be a valid Indian number.")]
         public string Phone { get; set; }
 
         // Status: Enum type with predefined values

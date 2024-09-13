@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace CMD.Appointment.Domain.Services
 {
-    public static class DateValidator 
+    public  class DateValidator 
     {
         public static bool ValidateDate(DateOnly date)
         {

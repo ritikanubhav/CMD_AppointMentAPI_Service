@@ -75,9 +75,9 @@ namespace CMD.Appointment.ApiService.Controllers
         }
 
         [HttpGet("FilterByStatus")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType<AppointmentModel>(StatusCodes.Status200OK)]
+        [ProducesResponseType<AppointmentModel>(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType<AppointmentModel>(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> FilterAppointmentsByStatus(string status, int pageNumber = 1, int pageSize = 20)
         {
             try
@@ -92,7 +92,7 @@ namespace CMD.Appointment.ApiService.Controllers
             catch (ArgumentException ex)
             {
                 _logger.Error(ex, $"Invalid status value: '{status}'.");
-                return BadRequest($"Invalid status value: '{status}'.");
+                return BadRequest($"Invalid status value: '{status}'. Please provide a valid appointment status.");
             }
             catch (Exception ex)
             {

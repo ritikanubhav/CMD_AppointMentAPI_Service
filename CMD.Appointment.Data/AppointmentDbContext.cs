@@ -110,6 +110,5 @@ namespace CMD.Appointment.Data
         }
         //Mapping to Tables
         public DbSet<AppointmentModel> Appointments { get; set; }
-
     }
 }

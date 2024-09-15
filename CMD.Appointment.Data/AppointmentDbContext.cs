@@ -9,13 +9,28 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CMD.Appointment.Data
 {
-    public class AppointmentDbContext:DbContext
+    /// <summary>
+    /// Entity Framework Core DbContext for managing appointment data.
+    /// </summary>
+    public class AppointmentDbContext : DbContext
     {
-        // Mapping to database by configuring from program.cs
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AppointmentDbContext"/> class with the specified options.
+        /// </summary>
+        /// <param name="options">The options to be used by the DbContext.</param>
         public AppointmentDbContext(DbContextOptions<AppointmentDbContext> options) : base(options)
         { }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AppointmentDbContext"/> class.
+        /// </summary>
         public AppointmentDbContext()
-        {}
+        { }
+
+        /// <summary>
+        /// Configures the model using the <see cref="ModelBuilder"/> API.
+        /// </summary>
+        /// <param name="modelBuilder">The <see cref="ModelBuilder"/> to use for configuring the model.</param>
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -108,7 +123,10 @@ namespace CMD.Appointment.Data
                 }
             );
         }
-        //Mapping to Tables
+
+        /// <summary>
+        /// Gets or sets the <see cref="DbSet{AppointmentModel}"/> for appointments.
+        /// </summary>
         public DbSet<AppointmentModel> Appointments { get; set; }
     }
 }

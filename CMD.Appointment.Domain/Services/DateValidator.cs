@@ -6,8 +6,16 @@ using System.Threading.Tasks;
 
 namespace CMD.Appointment.Domain.Services
 {
-    public  class DateValidator 
+    /// <summary>
+    /// Provides methods to validate dates for appointment-related operations.
+    /// </summary>
+    public class DateValidator
     {
+        /// <summary>
+        /// Validates if the given date is within the acceptable range (today to 30 days in the future).
+        /// </summary>
+        /// <param name="date">The date to validate.</param>
+        /// <returns><c>true</c> if the date is valid; otherwise, <c>false</c>.</returns>
         public static bool ValidateDate(DateOnly date)
         {
             DateOnly today = DateOnly.FromDateTime(DateTime.Now);

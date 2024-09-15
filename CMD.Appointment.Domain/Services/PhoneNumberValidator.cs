@@ -6,20 +6,33 @@ using System.Linq;
 
 namespace CMD.Appointment.Domain.Services
 {
+    /// <summary>
+    /// Custom validation attribute to validate phone numbers based on country-specific rules.
+    /// </summary>
     public class PhoneNumberValidatorAttribute : ValidationAttribute
     {
         private readonly string _defaultRegion;
         private static readonly Dictionary<string, (int MinLength, int MaxLength)> CountryCodeLengths = new()
         {
-            { "91", (10, 10) }, // India: 10 digits (excluding country code)
+            { "91", (10, 10) } // India: 10 digits (excluding country code)
             // Add more country codes and their length ranges as needed
         };
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="PhoneNumberValidatorAttribute"/> class.
+        /// </summary>
+        /// <param name="defaultRegion">The default region to use for phone number validation (e.g., "IN" for India).</param>
         public PhoneNumberValidatorAttribute(string defaultRegion = null)
         {
             _defaultRegion = defaultRegion;
         }
 
+        /// <summary>
+        /// Validates the phone number according to the specified country code rules.
+        /// </summary>
+        /// <param name="value">The value of the phone number to validate.</param>
+        /// <param name="validationContext">The context of the validation.</param>
+        /// <returns>Returns a <see cref="ValidationResult"/> indicating whether the phone number is valid or not.</returns>
         protected override ValidationResult IsValid(object value, ValidationContext validationContext)
         {
             var phoneNumberStr = value as string;
@@ -33,10 +46,7 @@ namespace CMD.Appointment.Domain.Services
             {
                 var phoneNumberUtil = PhoneNumberUtil.GetInstance();
 
-                // Normalize phone number by removing any spaces and non-numeric characters (excluding "+")
-                //phoneNumberStr = new string(phoneNumberStr.Where(c => char.IsDigit(c) || c == '+').ToArray());
-
-                // Ensure phone number starts with "+", add if not
+                // Ensure phone number starts with "+"
                 if (!phoneNumberStr.StartsWith("+"))
                 {
                     phoneNumberStr = $"+{phoneNumberStr}";

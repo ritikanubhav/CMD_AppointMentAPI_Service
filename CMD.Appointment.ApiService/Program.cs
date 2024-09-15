@@ -28,38 +28,26 @@ namespace CMD.Appointment.ApiService
             builder.Services.AddSwaggerGen();
 
             //Adding Jwt Bearer for Verifying Token
-            builder.Services.AddAuthentication(options =>
-            {
-                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            })
-            .AddJwtBearer(options =>
-            {
-                options.RequireHttpsMetadata = false;
-                options.SaveToken = true;
-                options.TokenValidationParameters = new TokenValidationParameters()
-                {
-                    ValidateIssuer = true,
-                    ValidateAudience = true,
-                    ValidateLifetime = true,
-                    ValidateIssuerSigningKey = true,
-                    ValidIssuer = builder.Configuration["Jwt:Issuer"],
-                    ValidAudience = builder.Configuration["Jwt:Audience"],
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"])),
-                    ClockSkew = TimeSpan.Zero
-                };
-            });
-
-            // Add CORS services
-            //builder.Services.AddCors(options =>
+            //builder.Services.AddAuthentication(options =>
             //{
-            //    options.AddPolicy("AllowSpecificOrigin",
-            //        policyBuilder =>
-            //        {
-            //            policyBuilder.AllowAnyOrigin()
-            //                         .AllowAnyMethod()
-            //                         .AllowAnyHeader();
-            //        });
+            //    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            //    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            //})
+            //.AddJwtBearer(options =>
+            //{
+            //    options.RequireHttpsMetadata = false;
+            //    options.SaveToken = true;
+            //    options.TokenValidationParameters = new TokenValidationParameters()
+            //    {
+            //        ValidateIssuer = true,
+            //        ValidateAudience = true,
+            //        ValidateLifetime = true,
+            //        ValidateIssuerSigningKey = true,
+            //        ValidIssuer = builder.Configuration["Jwt:Issuer"],
+            //        ValidAudience = builder.Configuration["Jwt:Audience"],
+            //        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"])),
+            //        ClockSkew = TimeSpan.Zero
+            //    };
             //});
 
             //add depencies to inject
@@ -83,6 +71,7 @@ namespace CMD.Appointment.ApiService
                 builder.AllowAnyHeader();
                 builder.AllowAnyMethod();
             });
+
             app.UseHttpsRedirection();
             app.UseAuthentication();
             app.UseAuthorization();

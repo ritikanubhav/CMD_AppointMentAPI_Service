@@ -53,7 +53,7 @@ namespace CMD.Appointment.ApiService.Controllers
 
         // PUT: api/Appointments/Cancel/{id}
         [HttpPut("Cancel/{id}")]
-        [Consumes("appliation/json")]
+        [Consumes("application/json")]
         [ProducesResponseType<AppointmentModel>(StatusCodes.Status200OK)]
         [ProducesResponseType<AppointmentModel>(StatusCodes.Status500InternalServerError)]
 

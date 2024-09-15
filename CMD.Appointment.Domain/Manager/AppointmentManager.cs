@@ -101,7 +101,7 @@ namespace CMD.Appointment.Domain.Manager
             return filteredAppointments;
         }
 
-        public async Task<List<AppointmentModel>> GetAllAppointments(int pageNumber, int pageSize)
+        public async Task<AppointmentResponse> GetAllAppointments(int pageNumber, int pageSize)
         {
             if (!PaginationValidator.ValidatePagination(pageNumber, pageSize))
             {

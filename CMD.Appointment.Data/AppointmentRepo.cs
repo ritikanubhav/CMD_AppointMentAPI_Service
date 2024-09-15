@@ -9,6 +9,7 @@ using CMD.Appointment.Domain.Enums;
 using CMD.Appointment.Domain.IRepositories;
 using CMD.Appointment.Domain.Exceptions;
 using CMD.Appointment.Domain.Services;
+using Azure;
 
 
 namespace CMD.Appointment.Data
@@ -93,14 +94,21 @@ namespace CMD.Appointment.Data
             return pagedAppointments;
         }
 
-        public async Task<List<AppointmentModel>> GetAllAppointments(int pageNumber = 1, int pageSize = 10)
+        public async Task<AppointmentResponse> GetAllAppointments(int pageNumber = 1, int pageSize = 10)
         {
+            var totalNoOfAppointments=await db.Appointments.CountAsync();
             var pagedAppointments = await db.Appointments
                                          .Skip((pageNumber-1) * pageSize)
                                          .Take(pageSize)
                                          .ToListAsync();
 
-            return pagedAppointments;
+            return new AppointmentResponse()
+            {
+                Items = pagedAppointments,
+                PageLimit = pageSize,
+                PageNumber = pageNumber,
+                TotalAppointments = totalNoOfAppointments
+            };
         }
         public async Task UpdateAppointment(AppointmentModel appointmentModel)
         {

@@ -13,7 +13,7 @@ namespace CMD.Appointment.Domain.Manager
         public Task CreateAppointment(AppointmentModel appointment);
         public Task UpdateAppointment(UpdateAppointmentDTO appointment,int id);
         public Task<AppointmentModel> GetAppointmentById(int id);
-        public Task<List<AppointmentModel>> GetAllAppointments(int pageNumber, int pageSize);
+        public Task<AppointmentResponse> GetAllAppointments(int pageNumber, int pageSize);
         public Task<List<AppointmentModel>> GetActiveAppointments(int pagenumber, int pagesize);
         public Task<List<AppointmentModel>> GetInactiveAppointments(int pagenumber, int pagesize);
         public Task<List<AppointmentModel>> FilterAppointmentsByDate(DateOnly date, int pageNumber, int pageSize);

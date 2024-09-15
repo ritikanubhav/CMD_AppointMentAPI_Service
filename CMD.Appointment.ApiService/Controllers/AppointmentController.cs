@@ -132,9 +132,12 @@ namespace CMD.Appointment.ApiService.Controllers
             try
             {
                 var result = await appointmentManager.GetAllAppointments(pageNo, pageLimit);
-                if (result == null || result.Count == 0)
+                if (result == null || result.Items.Count == 0)
                     return NotFound(messageService.GetMessage("InvalidAppointment"));
-                return Ok(result);
+                else
+                {
+                    return Ok(result);
+                }
             }
             catch (Exception ex)
             {

@@ -44,5 +44,15 @@ namespace CMD.Appointment.Domain.DTO
             [Required(ErrorMessage = "LastModifiedBy is mandatory.")]
             public string LastModifiedBy { get; set; }
 
+            // Status: Enum type with predefined values
+            [EnumDataType(typeof(AppointmentStatus))]
+            public AppointmentStatus? Status { get; set; }
+
+            // PatientId: 
+            public int? PatientId { get; set; }
+
+            // DoctorId:
+            public int? DoctorId { get; set; }
+
     }
 }

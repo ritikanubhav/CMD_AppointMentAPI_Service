@@ -43,9 +43,16 @@ namespace CMD.UnitTest
                 new AppointmentModel { Id = 1, PurposeOfVisit = "Checkup", Date = DateOnly.FromDateTime(DateTime.Now), Time = TimeOnly.FromDateTime(DateTime.Now), Email = "test@example.com", Phone = "+9198989898", Status = AppointmentStatus.SCHEDULED, Message = "Test message", CreatedBy = "Admin", CreatedDate = DateTime.Now, PatientId = 1, DoctorId = 1 },
                 new AppointmentModel { Id = 2, PurposeOfVisit = "Consultation", Date = DateOnly.FromDateTime(DateTime.Now.AddDays(1)), Time = TimeOnly.FromDateTime(DateTime.Now.AddHours(1)), Email = "test2@example.com", Phone = "+91987654321", Status = AppointmentStatus.CANCELLED, Message = "Another test message", CreatedBy = "Admin", CreatedDate = DateTime.Now, PatientId = 2, DoctorId = 2 }
             };
+            var mockResponse = new AppointmentResponse()
+            {
+                TotalAppointments = 2,
+                PageLimit = pageLimit,
+                PageNumber = pageNo,
+                Items = mockAppointments
+            };
 
             _mockManager.Setup(manager => manager.GetAllAppointments(pageNo, pageLimit))
-                        .ReturnsAsync(mockAppointments);
+                        .ReturnsAsync(mockResponse);
 
             // Act
             var result = await _controller.GetAllAppointments(pageNo, pageLimit) as OkObjectResult;
@@ -53,7 +60,7 @@ namespace CMD.UnitTest
             // Assert
             Assert.IsNotNull(result);
             Assert.AreEqual(StatusCodes.Status200OK, result.StatusCode);
-            Assert.AreEqual(mockAppointments, result.Value);
+            Assert.AreEqual(mockResponse, result.Value);
         }
 
         // Test case: No appointments found, should return 404 NotFound
@@ -65,8 +72,16 @@ namespace CMD.UnitTest
             var pageLimit = 10;
             var mockAppointments = new List<AppointmentModel>();
 
+            var mockResponse = new AppointmentResponse()
+            {
+                TotalAppointments = 2,
+                PageLimit = pageLimit,
+                PageNumber = pageNo,
+                Items = mockAppointments
+            };
+
             _mockManager.Setup(manager => manager.GetAllAppointments(pageNo, pageLimit))
-                        .ReturnsAsync(mockAppointments);
+                        .ReturnsAsync(mockResponse);
 
             _mockMessageService.Setup(service => service.GetMessage(It.IsAny<string>()))
                                .Returns("No appointments found");
@@ -92,8 +107,16 @@ namespace CMD.UnitTest
                 new AppointmentModel { Id = 1, PurposeOfVisit = "Checkup", Date = DateOnly.FromDateTime(DateTime.Now), Time = TimeOnly.FromDateTime(DateTime.Now), Email = "test@example.com", Phone = "1234567890", Status = AppointmentStatus.SCHEDULED, Message = "Test message", CreatedBy = "Admin", CreatedDate = DateTime.Now, PatientId = 1, DoctorId = 1 }
             };
 
+            var mockResponse = new AppointmentResponse()
+            {
+                TotalAppointments = 2,
+                PageLimit = pageLimit,
+                PageNumber = pageNo,
+                Items = mockAppointments
+            };
+
             _mockManager.Setup(manager => manager.GetAllAppointments(pageNo, pageLimit))
-                        .ReturnsAsync(mockAppointments);
+                        .ReturnsAsync(mockResponse);
 
             // Act
             var result = await _controller.GetAllAppointments(pageNo, pageLimit) as OkObjectResult;
@@ -101,7 +124,7 @@ namespace CMD.UnitTest
             // Assert
             Assert.IsNotNull(result);
             Assert.AreEqual(StatusCodes.Status200OK, result.StatusCode);
-            Assert.AreEqual(mockAppointments, result.Value);
+            Assert.AreEqual(mockResponse, result.Value);
         }
 
         // Test case: Exception thrown, should return 400 BadRequest

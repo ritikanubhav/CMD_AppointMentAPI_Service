@@ -11,7 +11,6 @@ using CMD.Appointment.Domain.Exceptions;
 using CMD.Appointment.Domain.Services;
 using Azure;
 
-
 namespace CMD.Appointment.Data
 {
     public class AppointmentRepo : IAppointmentRepo

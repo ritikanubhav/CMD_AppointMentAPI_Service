@@ -6,11 +6,13 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using Microsoft.Extensions.Configuration;
+using NLog;
 
 namespace CMD.Appointment.Domain.Services
 {
     public class MessageService:IMessageService
     {
+        private static readonly NLog.Logger _logger = LogManager.GetCurrentClassLogger();
 
         private readonly Dictionary<string, string> _messages;
 
@@ -40,6 +42,7 @@ namespace CMD.Appointment.Domain.Services
             {
                 // Handle the case where the file doesn't exist
                 // You might want to log this error or throw an exception
+                _logger.Error("Exception messages file not found: {XmlFilePath}", xmlFilePath);
                 throw new FileNotFoundException("Exception messages file not found.", xmlFilePath);
             }
 

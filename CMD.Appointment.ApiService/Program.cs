@@ -16,6 +16,7 @@ namespace CMD.Appointment.ApiService
     {
         public static void Main(string[] args)
         {
+
             var builder = WebApplication.CreateBuilder(args);
 
             var connectionString = builder.Configuration.GetConnectionString("default");

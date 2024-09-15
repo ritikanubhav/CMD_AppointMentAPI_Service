@@ -51,16 +51,16 @@ namespace CMD.Appointment.ApiService
             });
 
             // Add CORS services
-            builder.Services.AddCors(options =>
-            {
-                options.AddPolicy("AllowSpecificOrigin",
-                    policyBuilder =>
-                    {
-                        policyBuilder.AllowAnyOrigin()
-                                     .AllowAnyMethod()
-                                     .AllowAnyHeader();
-                    });
-            });
+            //builder.Services.AddCors(options =>
+            //{
+            //    options.AddPolicy("AllowSpecificOrigin",
+            //        policyBuilder =>
+            //        {
+            //            policyBuilder.AllowAnyOrigin()
+            //                         .AllowAnyMethod()
+            //                         .AllowAnyHeader();
+            //        });
+            //});
 
             //add depencies to inject
             builder.Services.AddTransient<AppointmentDbContext>();
@@ -75,10 +75,16 @@ namespace CMD.Appointment.ApiService
             app.UseSwagger();
             app.UseSwaggerUI();
 
-            app.UseHttpsRedirection();
-            app.UseCors("AllowSpecificOrigin");
             
-
+            // Add cors
+            app.UseCors(builder =>
+            {
+                builder.AllowAnyOrigin();
+                builder.AllowAnyHeader();
+                builder.AllowAnyMethod();
+            });
+            app.UseHttpsRedirection();
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.MapControllers();

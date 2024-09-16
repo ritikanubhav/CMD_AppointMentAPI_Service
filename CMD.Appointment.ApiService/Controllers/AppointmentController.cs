@@ -27,7 +27,6 @@ namespace CMD.Appointment.ApiService.Controllers
         /// </summary>
         /// <param name="appointmentManager">The appointment manager service.</param>
         /// <param name="messageService">The message service.</param>
-
         public AppointmentController(IAppointmentManager appointmentManager, IMessageService messageService)
         {
             this.appointmentManager = appointmentManager;

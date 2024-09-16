@@ -4,11 +4,11 @@ using CMD.Appointment.Domain.IRepositories;
 using CMD.Appointment.Domain.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Identity.Client;
 using Microsoft.AspNetCore.OData.Query;
 using CMD.Appointment.Domain.Manager;
 using CMD.Appointment.Domain.Exceptions;
 using CMD.Appointment.Domain.DTO;
-using NLog;
 
 namespace CMD.Appointment.ApiService.Controllers
 {
@@ -16,17 +16,15 @@ namespace CMD.Appointment.ApiService.Controllers
     [ApiController]
     public class AppointmentController : ControllerBase
     {
-        private static readonly NLog.Logger _logger = LogManager.GetCurrentClassLogger();
-
         private readonly IAppointmentManager appointmentManager;
         private readonly IMessageService messageService;
-
 
         /// <summary>
         /// Initializes a new instance of the <see cref="AppointmentController"/> class.
         /// </summary>
         /// <param name="appointmentManager">The appointment manager service.</param>
         /// <param name="messageService">The message service.</param>
+        /// 
         public AppointmentController(IAppointmentManager appointmentManager, IMessageService messageService)
         {
             this.appointmentManager = appointmentManager;
@@ -55,13 +53,9 @@ namespace CMD.Appointment.ApiService.Controllers
             }
             catch (Exception ex)
             {
-                _logger.Error(ex, "Error occurred while adding an appointment.");
                 return BadRequest(ex.Message);
             }
         }
-
-
-        // PUT: api/Appointments/Cancel/{id}
 
         /// <summary>
         /// Cancels an existing appointment by its ID.
@@ -81,16 +75,10 @@ namespace CMD.Appointment.ApiService.Controllers
             }
             catch (NotFoundException ex)
             {
-
-                _logger.Warn(ex, $"Appointment with ID {id} not found.");
-
                 return NotFound(ex.Message);
             }
             catch (Exception ex)
             {
-
-                _logger.Error(ex, $"Error occurred while cancelling appointment with ID {id}.");
-
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
@@ -112,28 +100,15 @@ namespace CMD.Appointment.ApiService.Controllers
             {
                 var result = await appointmentManager.FilterAppointmentsByStatus(status, pageNumber, pageSize);
                 if (result == null || result.Count == 0)
-                {
                     return NotFound($"No appointments found with status: {status}");
-                }
                 return Ok(result);
             }
             catch (ArgumentException ex)
             {
-
-                _logger.Error(ex, $"Invalid status value: '{status}'.");
-
                 return BadRequest($"Invalid status value: '{status}'. Please provide a valid appointment status.");
             }
             catch (Exception ex)
             {
-
-                _logger.Error(ex, "Error occurred while filtering appointments by status.");
-                return BadRequest(ex.Message);
-            }
-        }
-
-        [HttpPut("{id}")]
-
                 return BadRequest($"An error occurred while processing your request: {ex.Message}");
             }
         }
@@ -162,8 +137,6 @@ namespace CMD.Appointment.ApiService.Controllers
             }
             catch (Exception ex)
             {
-
-                _logger.Error(ex, $"Error occurred while updating appointment with ID {id}.");
                 return BadRequest(ex.Message);
             }
         }
@@ -184,17 +157,11 @@ namespace CMD.Appointment.ApiService.Controllers
             {
                 var result = await appointmentManager.GetAllAppointments(pageNo, pageLimit);
                 if (result == null || result.Items.Count == 0)
-
-                {
                     return NotFound(messageService.GetMessage("InvalidAppointment"));
-                }
-                    return NotFound(messageService.GetMessage("InvalidAppointment"));
-
                 return Ok(result);
             }
             catch (Exception ex)
             {
-                _logger.Error(ex, "Error occurred while retrieving all appointments.");
                 return BadRequest(ex.Message);
             }
         }
@@ -216,6 +183,7 @@ namespace CMD.Appointment.ApiService.Controllers
             try
             {
                 var result = await appointmentManager.FilterAppointmentsByDate(date, pageNumber, pageSize);
+
                 if (result == null || result.Count == 0)
                 {
                     return NotFound(messageService.GetMessage("NoAppointmentsForDate"));
@@ -224,7 +192,6 @@ namespace CMD.Appointment.ApiService.Controllers
             }
             catch (Exception ex)
             {
-                _logger.Error(ex, $"Error occurred while filtering appointments by date {date}.");
                 return BadRequest(ex.Message);
             }
         }
@@ -250,11 +217,11 @@ namespace CMD.Appointment.ApiService.Controllers
                 {
                     return NotFound("No active appointments found.");
                 }
+
                 return Ok(appointments);
             }
             catch (Exception ex)
             {
-                _logger.Error(ex, "Error occurred while retrieving active appointments.");
                 return BadRequest(ex.Message);
             }
         }
@@ -265,7 +232,6 @@ namespace CMD.Appointment.ApiService.Controllers
         /// <param name="pageNumber">The page number for pagination.</param>
         /// <param name="pageSize">The number of items per page.</param>
         /// <returns>A list of inactive appointments.</returns>
-
         [HttpGet("Inactive")]
         [EnableQuery]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -281,15 +247,14 @@ namespace CMD.Appointment.ApiService.Controllers
                 {
                     return NotFound(messageService.GetMessage("NoInActiveAppointments"));
                 }
+
                 return Ok(appointments);
             }
             catch (Exception ex)
             {
-                _logger.Error(ex, "Error occurred while retrieving inactive appointments.");
                 return BadRequest(ex.Message);
             }
         }
-
 
         /// <summary>
         /// Retrieves an appointment by its ID.
@@ -306,15 +271,16 @@ namespace CMD.Appointment.ApiService.Controllers
             try
             {
                 var appointment = await appointmentManager.GetAppointmentById(id);
+
                 if (appointment == null)
                 {
                     return NotFound();
                 }
+
                 return Ok(appointment);
             }
             catch (Exception ex)
             {
-                _logger.Error(ex, $"Error occurred while retrieving appointment with ID {id}.");
                 return BadRequest(ex.Message);
             }
         }
@@ -347,12 +313,9 @@ namespace CMD.Appointment.ApiService.Controllers
             }
             catch (Exception ex)
             {
-                _logger.Error(ex, $"Error occurred while retrieving appointments for patient with ID {id}.");
                 return BadRequest(ex.Message);
             }
         }
-
-
 
         /// <summary>
         /// Retrieves all appointments for a specific doctor by their ID.
@@ -372,6 +335,7 @@ namespace CMD.Appointment.ApiService.Controllers
             try
             {
                 var appointments = await appointmentManager.GetAllAppointmentsByDoctorID(id, pageNo, pageLimit);
+
                 if (appointments == null || appointments.Count() == 0)
                 {
                     return NotFound(messageService.GetMessage("NoAppointmentsForDoctorId"));
@@ -381,7 +345,6 @@ namespace CMD.Appointment.ApiService.Controllers
             }
             catch (Exception ex)
             {
-                _logger.Error(ex, $"Error occurred while retrieving appointments for doctor with ID {id}.");
                 return BadRequest(ex.Message);
             }
         }

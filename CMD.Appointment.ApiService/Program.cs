@@ -1,6 +1,4 @@
-
 using System.Text;
-
 using CMD.Appointment.Data;
 using CMD.Appointment.Domain;
 using CMD.Appointment.Domain.IRepositories;
@@ -12,59 +10,69 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace CMD.Appointment.ApiService
 {
+    /// <summary>
+    /// The entry point for the application.
+    /// </summary>
     public class Program
     {
+        /// <summary>
+        /// The main method for running the application.
+        /// </summary>
+        /// <param name="args">Command-line arguments.</param>
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
 
+            // Configure the database context with the connection string from configuration
             var connectionString = builder.Configuration.GetConnectionString("default");
             builder.Services.AddDbContext<AppointmentDbContext>(option => option.UseSqlServer(connectionString));
 
+            // Add services to the container.
             builder.Services.AddControllers();
 
-            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+            // Configure Swagger/OpenAPI for API documentation
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
-            //Adding Jwt Bearer for Verifying Token
-            //builder.Services.AddAuthentication(options =>
-            //{
-            //    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-            //    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            //})
-            //.AddJwtBearer(options =>
-            //{
-            //    options.RequireHttpsMetadata = false;
-            //    options.SaveToken = true;
-            //    options.TokenValidationParameters = new TokenValidationParameters()
-            //    {
-            //        ValidateIssuer = true,
-            //        ValidateAudience = true,
-            //        ValidateLifetime = true,
-            //        ValidateIssuerSigningKey = true,
-            //        ValidIssuer = builder.Configuration["Jwt:Issuer"],
-            //        ValidAudience = builder.Configuration["Jwt:Audience"],
-            //        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"])),
-            //        ClockSkew = TimeSpan.Zero
-            //    };
-            //});
+            // Uncomment the following block to configure JWT Bearer Authentication
+            // builder.Services.AddAuthentication(options =>
+            // {
+            //     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            //     options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            // })
+            // .AddJwtBearer(options =>
+            // {
+            //     options.RequireHttpsMetadata = false;
+            //     options.SaveToken = true;
+            //     options.TokenValidationParameters = new TokenValidationParameters()
+            //     {
+            //         ValidateIssuer = true,
+            //         ValidateAudience = true,
+            //         ValidateLifetime = true,
+            //         ValidateIssuerSigningKey = true,
+            //         ValidIssuer = builder.Configuration["Jwt:Issuer"],
+            //         ValidAudience = builder.Configuration["Jwt:Audience"],
+            //         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"])),
+            //         ClockSkew = TimeSpan.Zero
+            //     };
+            // });
 
-            //add depencies to inject
+            // Register services for dependency injection
             builder.Services.AddTransient<AppointmentDbContext>();
-            builder.Services.AddTransient<IAppointmentRepo,AppointmentRepo>();
-            builder.Services.AddTransient<IAppointmentManager,AppointmentManager>();
+            builder.Services.AddTransient<IAppointmentRepo, AppointmentRepo>();
+            builder.Services.AddTransient<IAppointmentManager, AppointmentManager>();
             builder.Services.AddTransient<IMessageService, MessageService>();
 
+            // Configure AutoMapper with the mapping profile
             builder.Services.AddAutoMapper(typeof(AppointmentMappingProfile));
 
             var app = builder.Build();
 
+            // Configure the HTTP request pipeline
             app.UseSwagger();
             app.UseSwaggerUI();
 
-            
-            // Add cors
+            // Enable CORS (Cross-Origin Resource Sharing)
             app.UseCors(builder =>
             {
                 builder.AllowAnyOrigin();

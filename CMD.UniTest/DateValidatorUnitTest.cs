@@ -1,17 +1,19 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using CMD.Appointment.Domain.Services;
 
 namespace CMD.UnitTest
 {
+    /// <summary>
+    /// Contains unit tests for the <see cref="DateValidator"/> class, specifically testing the <see cref="DateValidator.ValidateDate(DateOnly)"/> method.
+    /// </summary>
     [TestClass]
     public class DateValidatorUnitTest
     {
-        
-
+        /// <summary>
+        /// Tests that <see cref="DateValidator.ValidateDate(DateOnly)"/> returns <c>false</c> when the provided date is in the past.
+        /// </summary>
         [TestMethod]
         public void ValidateDate_ReturnsFalse_WhenDateIsInThePast()
         {
@@ -25,6 +27,9 @@ namespace CMD.UnitTest
             Assert.IsFalse(result);
         }
 
+        /// <summary>
+        /// Tests that <see cref="DateValidator.ValidateDate(DateOnly)"/> returns <c>true</c> when the provided date is today.
+        /// </summary>
         [TestMethod]
         public void ValidateDate_ReturnsTrue_WhenDateIsToday()
         {
@@ -38,6 +43,9 @@ namespace CMD.UnitTest
             Assert.IsTrue(result);
         }
 
+        /// <summary>
+        /// Tests that <see cref="DateValidator.ValidateDate(DateOnly)"/> returns <c>true</c> when the provided date is exactly 30 days from today.
+        /// </summary>
         [TestMethod]
         public void ValidateDate_ReturnsTrue_WhenDateIsExactly30DaysFromToday()
         {
@@ -51,6 +59,9 @@ namespace CMD.UnitTest
             Assert.IsTrue(result);
         }
 
+        /// <summary>
+        /// Tests that <see cref="DateValidator.ValidateDate(DateOnly)"/> returns <c>false</c> when the provided date is greater than 30 days from today.
+        /// </summary>
         [TestMethod]
         public void ValidateDate_ReturnsFalse_WhenDateIsGreaterThan30DaysFromToday()
         {
@@ -64,6 +75,9 @@ namespace CMD.UnitTest
             Assert.IsFalse(result);
         }
 
+        /// <summary>
+        /// Tests that <see cref="DateValidator.ValidateDate(DateOnly)"/> returns <c>true</c> when the provided date is 1 day in the future.
+        /// </summary>
         [TestMethod]
         public void ValidateDate_ReturnsTrue_WhenDateIs1DayInTheFuture()
         {

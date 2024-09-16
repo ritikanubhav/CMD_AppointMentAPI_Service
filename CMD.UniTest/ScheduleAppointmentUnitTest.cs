@@ -13,6 +13,9 @@ using Microsoft.AspNetCore.Http;
 
 namespace CMD.UnitTest
 {
+    /// <summary>
+    /// Unit tests for the <see cref="AppointmentController"/> class.
+    /// </summary>
     [TestClass]
     public class ScheduleAppointmentUnitTest
     {
@@ -20,6 +23,9 @@ namespace CMD.UnitTest
         private Mock<IMessageService> _mockMessageService;
         private AppointmentController _controller;
 
+        /// <summary>
+        /// Initializes the test setup by creating mocks and the controller instance.
+        /// </summary>
         [TestInitialize]
         public void TestInitialize()
         {
@@ -28,6 +34,10 @@ namespace CMD.UnitTest
             _controller = new AppointmentController(_mockManager.Object, _mockMessageService.Object);
         }
 
+        /// <summary>
+        /// Tests that a valid appointment returns a <see cref="CreatedResult"/> with HTTP status 201.
+        /// </summary>
+        /// <returns>A task representing the asynchronous operation.</returns>
         [TestMethod]
         public async Task AddAppointment_ReturnsCreated_WhenAppointmentIsValid()
         {
@@ -61,6 +71,10 @@ namespace CMD.UnitTest
             Assert.AreEqual(StatusCodes.Status201Created, createdResult.StatusCode);
         }
 
+        /// <summary>
+        /// Tests that an invalid appointment returns a <see cref="BadRequestObjectResult"/> with HTTP status 400.
+        /// </summary>
+        /// <returns>A task representing the asynchronous operation.</returns>
         [TestMethod]
         public async Task AddAppointment_ReturnsBadRequest_WhenAppointmentIsInvalid()
         {
@@ -84,6 +98,10 @@ namespace CMD.UnitTest
             Assert.AreEqual(StatusCodes.Status400BadRequest, badRequestResult.StatusCode);
         }
 
+        /// <summary>
+        /// Tests that an exception during appointment creation returns a <see cref="BadRequestObjectResult"/> with HTTP status 400 and the exception message.
+        /// </summary>
+        /// <returns>A task representing the asynchronous operation.</returns>
         [TestMethod]
         public async Task AddAppointment_ReturnsBadRequest_OnException()
         {
@@ -117,9 +135,15 @@ namespace CMD.UnitTest
             Assert.AreEqual(StatusCodes.Status400BadRequest, badRequestResult.StatusCode);
             Assert.AreEqual("Database failure", badRequestResult.Value);
         }
+
+        /// <summary>
+        /// Tests that an appointment with a past date returns a <see cref="CreatedResult"/> with HTTP status 201.
+        /// </summary>
+        /// <returns>A task representing the asynchronous operation.</returns>
         [TestMethod]
         public async Task AddAppointment_ReturnsBadRequest_WhenAppointmentHasPastDate()
         {
+            // Arrange
             var validAppointment = new AppointmentModel
             {
                 PurposeOfVisit = "Consultation",
@@ -149,9 +173,14 @@ namespace CMD.UnitTest
             Assert.AreEqual(StatusCodes.Status201Created, createdResult.StatusCode);
         }
 
+        /// <summary>
+        /// Tests that an appointment with a future date beyond the allowed limit returns a <see cref="CreatedResult"/> with HTTP status 201.
+        /// </summary>
+        /// <returns>A task representing the asynchronous operation.</returns>
         [TestMethod]
         public async Task AddAppointment_ReturnsBadRequest_WhenAppointmentHasFutureDateBeyondLimit()
         {
+            // Arrange
             var validAppointment = new AppointmentModel
             {
                 PurposeOfVisit = "Consultation",

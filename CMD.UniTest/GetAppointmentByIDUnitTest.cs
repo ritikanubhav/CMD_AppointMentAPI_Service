@@ -13,13 +13,19 @@ using CMD.Appointment.Domain.Services; // Make sure to import this
 
 namespace CMD.Test
 {
+    /// <summary>
+    /// Contains unit tests for the <see cref="AppointmentController"/> class.
+    /// </summary>
     [TestClass]
     public class AppointmentControllerTests
     {
         private Mock<IAppointmentManager> _mockManager;
-        private Mock<IMessageService> _mockMessageService; // Add this mock
+        private Mock<IMessageService> _mockMessageService;
         private AppointmentController _controller;
 
+        /// <summary>
+        /// Initializes the test environment by creating mocks and controller instance.
+        /// </summary>
         [TestInitialize]
         public void Setup()
         {
@@ -28,7 +34,11 @@ namespace CMD.Test
             _controller = new AppointmentController(_mockManager.Object, _mockMessageService.Object); // Pass both mocks
         }
 
-        // Test case: Appointment found, should return 200 OK
+        /// <summary>
+        /// Tests that the <see cref="AppointmentController.GetAppointmentById"/> method returns an <see cref="OkObjectResult"/>
+        /// with the appointment data when the appointment is found.
+        /// </summary>
+        /// <returns>A task representing the asynchronous test operation.</returns>
         [TestMethod]
         public async Task GetAppointmentById_ShouldReturnOk_WhenAppointmentIsFound()
         {
@@ -60,7 +70,11 @@ namespace CMD.Test
             Assert.AreEqual(mockAppointment, result.Value);
         }
 
-        // Test case: Appointment not found, should return 404 NotFound
+        /// <summary>
+        /// Tests that the <see cref="AppointmentController.GetAppointmentById"/> method returns a <see cref="NotFoundResult"/>
+        /// when the appointment is not found.
+        /// </summary>
+        /// <returns>A task representing the asynchronous test operation.</returns>
         [TestMethod]
         public async Task GetAppointmentById_ShouldReturnNotFound_WhenAppointmentIsNotFound()
         {
@@ -77,7 +91,11 @@ namespace CMD.Test
             Assert.AreEqual(StatusCodes.Status404NotFound, result.StatusCode);
         }
 
-        // Test case: Exception thrown, should return 400 BadRequest with error message
+        /// <summary>
+        /// Tests that the <see cref="AppointmentController.GetAppointmentById"/> method returns a <see cref="BadRequestObjectResult"/>
+        /// with an error message when an exception is thrown.
+        /// </summary>
+        /// <returns>A task representing the asynchronous test operation.</returns>
         [TestMethod]
         public async Task GetAppointmentById_ShouldReturnBadRequest_WhenExceptionIsThrown()
         {

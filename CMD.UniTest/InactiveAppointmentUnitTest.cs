@@ -14,12 +14,14 @@ using AutoMapper;
 [TestClass]
 public class AppointmentManagerInactiveTests
 {
-
     private Mock<IAppointmentRepo> _mockRepo;
     private AppointmentManager _appointmentManager;
-
     private Mock<IMapper> _mockMapper;
     private Mock<IMessageService> _messageService;
+
+    /// <summary>
+    /// Initializes the test environment by creating mocks and manager instance.
+    /// </summary>
     [TestInitialize]
     public void Setup()
     {
@@ -29,6 +31,11 @@ public class AppointmentManagerInactiveTests
         _appointmentManager = new AppointmentManager(_mockRepo.Object, _mockMapper.Object, _messageService.Object);
     }
 
+    /// <summary>
+    /// Tests that the <see cref="AppointmentManager.GetInactiveAppointments"/> method returns a list of appointments
+    /// when valid pagination parameters are provided.
+    /// </summary>
+    /// <returns>A task representing the asynchronous test operation.</returns>
     [TestMethod]
     public async Task GetInactiveAppointments_ValidPagination_ReturnsAppointments()
     {
@@ -40,7 +47,6 @@ public class AppointmentManagerInactiveTests
             new AppointmentModel { Status = AppointmentStatus.CANCELLED },
             new AppointmentModel { Status = AppointmentStatus.CLOSED },
             new AppointmentModel { Status = AppointmentStatus.CLOSED },
-
         };
 
         _mockRepo.Setup(repo => repo.GetInactiveAppointments(pageNumber, pageSize))
@@ -55,6 +61,11 @@ public class AppointmentManagerInactiveTests
         CollectionAssert.AreEqual(expectedAppointments, result);
     }
 
+    /// <summary>
+    /// Tests that the <see cref="AppointmentManager.GetInactiveAppointments"/> method returns an empty list
+    /// when there are no inactive appointments.
+    /// </summary>
+    /// <returns>A task representing the asynchronous test operation.</returns>
     [TestMethod]
     public async Task GetInactiveAppointments_NoAppointments_ReturnsEmptyList()
     {
@@ -73,6 +84,11 @@ public class AppointmentManagerInactiveTests
         Assert.AreEqual(0, result.Count);
     }
 
+    /// <summary>
+    /// Tests that the <see cref="AppointmentManager.GetInactiveAppointments"/> method throws a
+    /// <see cref="NotValidPaginationException"/> when the page number is invalid (less than or equal to 0).
+    /// </summary>
+    /// <returns>A task representing the asynchronous test operation.</returns>
     [TestMethod]
     [ExpectedException(typeof(NotValidPaginationException))]
     public async Task GetInactiveAppointments_InvalidPageNumber_ThrowsException()
@@ -87,6 +103,11 @@ public class AppointmentManagerInactiveTests
         // Assert is handled by ExpectedException
     }
 
+    /// <summary>
+    /// Tests that the <see cref="AppointmentManager.GetInactiveAppointments"/> method throws a
+    /// <see cref="NotValidPaginationException"/> when the page size is invalid (greater than 100).
+    /// </summary>
+    /// <returns>A task representing the asynchronous test operation.</returns>
     [TestMethod]
     [ExpectedException(typeof(NotValidPaginationException))]
     public async Task GetInactiveAppointments_InvalidPageSize_ThrowsException()
@@ -101,6 +122,11 @@ public class AppointmentManagerInactiveTests
         // Assert is handled by ExpectedException
     }
 
+    /// <summary>
+    /// Tests that the <see cref="AppointmentManager.GetInactiveAppointments"/> method throws a
+    /// <see cref="NotValidPaginationException"/> when the page size is negative.
+    /// </summary>
+    /// <returns>A task representing the asynchronous test operation.</returns>
     [TestMethod]
     [ExpectedException(typeof(NotValidPaginationException))]
     public async Task GetInactiveAppointments_NegativePageSize_ThrowsException()

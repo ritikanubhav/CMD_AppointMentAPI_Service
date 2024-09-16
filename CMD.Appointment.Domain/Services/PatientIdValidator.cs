@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Net.Http;
 using System.Threading.Tasks;
+using static System.Net.WebRequestMethods;
 
 namespace CMD.Appointment.Domain.Services
 {
@@ -8,7 +9,7 @@ namespace CMD.Appointment.Domain.Services
     {
         private static readonly HttpClient HttpClient = new HttpClient
         {
-            BaseAddress = new Uri("https://cmdpatientmodulewebapp-d8b6hvgxesa8fmda.southeastasia-01.azurewebsites.net") // Replace with your API base URL
+            BaseAddress = new Uri(" https://cmdpatientnewwebapp-ckbwb7h0cjhrfehx.southeastasia-01.azurewebsites.net") //Replace with your API base URL
         };
 
         /// <summary>

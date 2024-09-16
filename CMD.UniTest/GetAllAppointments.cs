@@ -13,6 +13,9 @@ using CMD.Appointment.Domain.Services;
 
 namespace CMD.UnitTest
 {
+    /// <summary>
+    /// Contains unit tests for the <see cref="AppointmentController"/> class.
+    /// </summary>
     [TestClass]
     public class AppointmentControllerTests
     {
@@ -20,6 +23,9 @@ namespace CMD.UnitTest
         private Mock<IMessageService> _mockMessageService;
         private AppointmentController _controller;
 
+        /// <summary>
+        /// Initializes the test environment by creating mocks and controller instance.
+        /// </summary>
         [TestInitialize]
         public void Setup()
         {
@@ -31,7 +37,11 @@ namespace CMD.UnitTest
             _controller = new AppointmentController(_mockManager.Object, _mockMessageService.Object);
         }
 
-        // Test case: Valid pagination, appointments found, should return 200 OK
+        /// <summary>
+        /// Tests that the <see cref="AppointmentController.GetAllAppointments"/> method returns an <see cref="OkObjectResult"/>
+        /// with the appointments data when appointments are found.
+        /// </summary>
+        /// <returns>A task representing the asynchronous test operation.</returns>
         [TestMethod]
         public async Task GetAllAppointments_ShouldReturnOk_WhenAppointmentsAreFound()
         {
@@ -43,7 +53,7 @@ namespace CMD.UnitTest
                 new AppointmentModel { Id = 1, PurposeOfVisit = "Checkup", Date = DateOnly.FromDateTime(DateTime.Now), Time = TimeOnly.FromDateTime(DateTime.Now), Email = "test@example.com", Phone = "+9198989898", Status = AppointmentStatus.SCHEDULED, Message = "Test message", CreatedBy = "Admin", CreatedDate = DateTime.Now, PatientId = 1, DoctorId = 1 },
                 new AppointmentModel { Id = 2, PurposeOfVisit = "Consultation", Date = DateOnly.FromDateTime(DateTime.Now.AddDays(1)), Time = TimeOnly.FromDateTime(DateTime.Now.AddHours(1)), Email = "test2@example.com", Phone = "+91987654321", Status = AppointmentStatus.CANCELLED, Message = "Another test message", CreatedBy = "Admin", CreatedDate = DateTime.Now, PatientId = 2, DoctorId = 2 }
             };
-            var mockResponse = new AppointmentResponse()
+            var mockResponse = new AppointmentResponse
             {
                 TotalAppointments = 2,
                 PageLimit = pageLimit,
@@ -63,7 +73,11 @@ namespace CMD.UnitTest
             Assert.AreEqual(mockResponse, result.Value);
         }
 
-        // Test case: No appointments found, should return 404 NotFound
+        /// <summary>
+        /// Tests that the <see cref="AppointmentController.GetAllAppointments"/> method returns a <see cref="NotFoundObjectResult"/>
+        /// with a message when no appointments are found.
+        /// </summary>
+        /// <returns>A task representing the asynchronous test operation.</returns>
         [TestMethod]
         public async Task GetAllAppointments_ShouldReturnNotFound_WhenNoAppointmentsAreFound()
         {
@@ -72,9 +86,9 @@ namespace CMD.UnitTest
             var pageLimit = 10;
             var mockAppointments = new List<AppointmentModel>();
 
-            var mockResponse = new AppointmentResponse()
+            var mockResponse = new AppointmentResponse
             {
-                TotalAppointments = 2,
+                TotalAppointments = 0,
                 PageLimit = pageLimit,
                 PageNumber = pageNo,
                 Items = mockAppointments
@@ -95,7 +109,11 @@ namespace CMD.UnitTest
             Assert.AreEqual("No appointments found", result.Value);
         }
 
-        // Test case: Invalid pagination, should handle gracefully and return appointments
+        /// <summary>
+        /// Tests that the <see cref="AppointmentController.GetAllAppointments"/> method returns an <see cref="OkObjectResult"/>
+        /// with the appointments data even when invalid pagination parameters are provided.
+        /// </summary>
+        /// <returns>A task representing the asynchronous test operation.</returns>
         [TestMethod]
         public async Task GetAllAppointments_ShouldReturnOk_WhenInvalidPaginationIsGiven()
         {
@@ -107,9 +125,9 @@ namespace CMD.UnitTest
                 new AppointmentModel { Id = 1, PurposeOfVisit = "Checkup", Date = DateOnly.FromDateTime(DateTime.Now), Time = TimeOnly.FromDateTime(DateTime.Now), Email = "test@example.com", Phone = "1234567890", Status = AppointmentStatus.SCHEDULED, Message = "Test message", CreatedBy = "Admin", CreatedDate = DateTime.Now, PatientId = 1, DoctorId = 1 }
             };
 
-            var mockResponse = new AppointmentResponse()
+            var mockResponse = new AppointmentResponse
             {
-                TotalAppointments = 2,
+                TotalAppointments = 1,
                 PageLimit = pageLimit,
                 PageNumber = pageNo,
                 Items = mockAppointments
@@ -127,7 +145,11 @@ namespace CMD.UnitTest
             Assert.AreEqual(mockResponse, result.Value);
         }
 
-        // Test case: Exception thrown, should return 400 BadRequest
+        /// <summary>
+        /// Tests that the <see cref="AppointmentController.GetAllAppointments"/> method returns a <see cref="BadRequestObjectResult"/>
+        /// with an error message when an exception is thrown.
+        /// </summary>
+        /// <returns>A task representing the asynchronous test operation.</returns>
         [TestMethod]
         public async Task GetAllAppointments_ShouldReturnBadRequest_WhenExceptionIsThrown()
         {

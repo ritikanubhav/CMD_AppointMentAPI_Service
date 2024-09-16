@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -10,6 +12,9 @@ using CMD.Appointment.Domain.Manager;
 
 namespace CMD.UnitTest
 {
+    /// <summary>
+    /// Contains unit tests for the <see cref="AppointmentController"/> class, specifically testing the <see cref="AppointmentController.UpdateAppointment"/> method.
+    /// </summary>
     [TestClass]
     public class AppointmentControllerEditTests
     {
@@ -17,6 +22,9 @@ namespace CMD.UnitTest
         private Mock<IMessageService> messageServiceMock;
         private AppointmentController controller;
 
+        /// <summary>
+        /// Initializes the test environment by creating mocks and an instance of <see cref="AppointmentController"/>.
+        /// </summary>
         [TestInitialize]
         public void Setup()
         {
@@ -26,6 +34,10 @@ namespace CMD.UnitTest
             controller = new AppointmentController(appointmentManagerMock.Object, messageServiceMock.Object);
         }
 
+        /// <summary>
+        /// Tests that <see cref="AppointmentController.UpdateAppointment"/> returns an <see cref="OkObjectResult"/> when valid data is provided.
+        /// </summary>
+        /// <returns>A task representing the asynchronous test operation.</returns>
         [TestMethod]
         public async Task UpdateAppointment_ReturnsOkResult_WithValidData()
         {
@@ -56,6 +68,10 @@ namespace CMD.UnitTest
             Assert.AreEqual(appointmentData, okResult.Value);
         }
 
+        /// <summary>
+        /// Tests that <see cref="AppointmentController.UpdateAppointment"/> returns a <see cref="BadRequestObjectResult"/> when the model state is invalid.
+        /// </summary>
+        /// <returns>A task representing the asynchronous test operation.</returns>
         [TestMethod]
         public async Task UpdateAppointment_ReturnsBadRequest_OnInvalidModelState()
         {
@@ -90,6 +106,10 @@ namespace CMD.UnitTest
             Assert.AreEqual("Required", errorMessages.First());
         }
 
+        /// <summary>
+        /// Tests that <see cref="AppointmentController.UpdateAppointment"/> returns a <see cref="BadRequestObjectResult"/> when an exception is thrown during the update process.
+        /// </summary>
+        /// <returns>A task representing the asynchronous test operation.</returns>
         [TestMethod]
         public async Task UpdateAppointment_ReturnsBadRequest_OnException()
         {

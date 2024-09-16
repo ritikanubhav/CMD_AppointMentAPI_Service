@@ -10,11 +10,13 @@ using CMD.Appointment.Domain.Manager;
 using CMD.Appointment.Domain.Exceptions;
 using CMD.Appointment.Domain.DTO;
 using NLog;
+using Microsoft.AspNetCore.Authorization;
 
 namespace CMD.Appointment.ApiService.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class AppointmentController : ControllerBase
     {
         private static readonly NLog.Logger _logger = LogManager.GetCurrentClassLogger();

@@ -9,7 +9,7 @@ namespace CMD.Appointment.Domain.Services
     {
         private static readonly HttpClient HttpClient = new HttpClient
         {
-            BaseAddress = new Uri(" https://cmdpatientnewwebapp-ckbwb7h0cjhrfehx.southeastasia-01.azurewebsites.net") //Replace with your API base URL
+            //BaseAddress = new Uri(" https://cmdpatientnewwebapp-ckbwb7h0cjhrfehx.southeastasia-01.azurewebsites.net") //Replace with your API base URL
         };
 
         /// <summary>

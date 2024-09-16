@@ -21,7 +21,6 @@ namespace CMD.Appointment.ApiService
         /// <param name="args">Command-line arguments.</param>
         public static void Main(string[] args)
         {
-
             var builder = WebApplication.CreateBuilder(args);
 
             // Configure the database context with the connection string from configuration

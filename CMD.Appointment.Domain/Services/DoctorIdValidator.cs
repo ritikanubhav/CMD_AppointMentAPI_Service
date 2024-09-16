@@ -3,13 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using NLog;
 
 namespace CMD.Appointment.Domain.Services
 {
     public class DoctorIdValidator
     {
-        private static readonly NLog.Logger _logger = LogManager.GetCurrentClassLogger();
 
         private static readonly HttpClient HttpClient = new HttpClient
         {

@@ -34,7 +34,9 @@ namespace CMD.Appointment.ApiService
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
-            // Uncomment the following block to configure JWT Bearer Authentication
+            /// <summary>
+            /// Adds JWT Bearer Authentication service.
+            /// </summary>
             builder.Services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;

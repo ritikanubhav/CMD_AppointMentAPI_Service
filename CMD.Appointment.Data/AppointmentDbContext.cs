@@ -32,6 +32,10 @@ namespace CMD.Appointment.Data
             // Ensure that foreign key constraints are handled correctly
             Database.ExecuteSqlRaw("DELETE FROM Appointments");
         }
+        public void ResetIdentity()
+        {
+            Database.ExecuteSqlRaw("DBCC CHECKIDENT ('Appointments', RESEED, 0);");
+        }
 
         /// <summary>
         /// Configures the model using the <see cref="ModelBuilder"/> API.

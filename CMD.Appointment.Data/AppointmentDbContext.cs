@@ -27,6 +27,12 @@ namespace CMD.Appointment.Data
         public AppointmentDbContext()
         { }
 
+        public void ClearDatabase()
+        {
+            // Ensure that foreign key constraints are handled correctly
+            Database.ExecuteSqlRaw("DELETE FROM Appointments");
+        }
+
         /// <summary>
         /// Configures the model using the <see cref="ModelBuilder"/> API.
         /// </summary>
@@ -34,93 +40,211 @@ namespace CMD.Appointment.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-
             modelBuilder.Entity<AppointmentModel>().HasData(
-                new AppointmentModel
-                {
-                    Id = 1,
-                    PurposeOfVisit = "General Checkup",
-                    Date = new DateOnly(2024, 9, 20),
-                    Time = new TimeOnly(9, 30), // 9:30 AM
-                    Email = "john.doe@example.com",
-                    Phone = "123-456-7890",
-                    Status = AppointmentStatus.SCHEDULED,
-                    Message = "Please bring your medical reports.",
-                    CreatedBy = "Admin",
-                    CreatedDate = DateTime.Now,
-                    LastModifiedBy = "Admin",
-                    LastModifiedDate = DateTime.Now,
-                    PatientId = 101,
-                    DoctorId = 202
-                },
-                new AppointmentModel
-                {
-                    Id = 2,
-                    PurposeOfVisit = "Follow-up on blood test",
-                    Date = new DateOnly(2024, 9, 22),
-                    Time = new TimeOnly(11, 0), // 11:00 AM
-                    Email = "jane.smith@example.com",
-                    Phone = "987-654-3210",
-                    Status = AppointmentStatus.CANCELLED,
-                    Message = "Appointment canceled by patient.",
-                    CreatedBy = "Admin",
-                    CreatedDate = DateTime.Now,
-                    LastModifiedBy = "Admin",
-                    LastModifiedDate = DateTime.Now,
-                    PatientId = 102,
-                    DoctorId = 203
-                },
-                new AppointmentModel
-                {
-                    Id = 3,
-                    PurposeOfVisit = "Dental Checkup",
-                    Date = new DateOnly(2024, 9, 25),
-                    Time = new TimeOnly(10, 0), // 10:00 AM
-                    Email = "alice.jones@example.com",
-                    Phone = "555-123-4567",
-                    Status = AppointmentStatus.CLOSED,
-                    Message = "Dental checkup completed.",
-                    CreatedBy = "Admin",
-                    CreatedDate = DateTime.Now,
-                    LastModifiedBy = "Admin",
-                    LastModifiedDate = DateTime.Now,
-                    PatientId = 103,
-                    DoctorId = 204
-                },
-                new AppointmentModel
-                {
-                    Id = 4,
-                    PurposeOfVisit = "Eye Examination",
-                    Date = new DateOnly(2024, 9, 26),
-                    Time = new TimeOnly(14, 0), // 2:00 PM
-                    Email = "mike.brown@example.com",
-                    Phone = "555-987-6543",
-                    Status = AppointmentStatus.SCHEDULED,
-                    Message = "Please bring your previous prescription.",
-                    CreatedBy = "Admin",
-                    CreatedDate = DateTime.Now,
-                    LastModifiedBy = "Admin",
-                    LastModifiedDate = DateTime.Now,
-                    PatientId = 104,
-                    DoctorId = 205
-                },
-                new AppointmentModel
-                {
-                    Id = 5,
-                    PurposeOfVisit = "Orthopedic Consultation",
-                    Date = new DateOnly(2024, 9, 28),
-                    Time = new TimeOnly(16, 30), // 4:30 PM
-                    Email = "chris.evans@example.com",
-                    Phone = "555-654-7891",
-                    Status = AppointmentStatus.CANCELLED,
-                    Message = "Doctor is unavailable, appointment rescheduled.",
-                    CreatedBy = "Admin",
-                    CreatedDate = DateTime.Now,
-                    LastModifiedBy = "Admin",
-                    LastModifiedDate = DateTime.Now,
-                    PatientId = 105,
-                    DoctorId = 206
-                }
+            new AppointmentModel
+            {
+                Id = 1,
+                PurposeOfVisit = "Consultation",
+                Date = new DateOnly(2024, 9, 20),
+                Time = new TimeOnly(9, 30), // 9:30 AM
+                Email = "john.doe@example.com",
+                Phone = "919876543210",
+                Status = AppointmentStatus.SCHEDULED,
+                Message = "Please bring your medical reports.",
+                CreatedBy = "Admin",
+                CreatedDate = DateTime.Now,
+                LastModifiedBy = "Admin",
+                LastModifiedDate = DateTime.Now,
+                PatientId = 1,
+                DoctorId = 1
+            },
+            new AppointmentModel
+            {
+                Id = 2,
+                PurposeOfVisit = "Follow Up",
+                Date = new DateOnly(2024, 9, 22),
+                Time = new TimeOnly(11, 0), // 11:00 AM
+                Email = "jane.smith@example.com",
+                Phone = "919234567890",
+                Status = AppointmentStatus.CANCELLED,
+                Message = "Appointment canceled by patient.",
+                CreatedBy = "Admin",
+                CreatedDate = DateTime.Now,
+                LastModifiedBy = "Admin",
+                LastModifiedDate = DateTime.Now,
+                PatientId = 2,
+                DoctorId = 2
+            },
+            new AppointmentModel
+            {
+                Id = 3,
+                PurposeOfVisit = "Treatment",
+                Date = new DateOnly(2024, 9, 25),
+                Time = new TimeOnly(10, 0), // 10:00 AM
+                Email = "alice.jones@example.com",
+                Phone = "919345678901",
+                Status = AppointmentStatus.CLOSED,
+                Message = "Dental checkup completed.",
+                CreatedBy = "Admin",
+                CreatedDate = DateTime.Now,
+                LastModifiedBy = "Admin",
+                LastModifiedDate = DateTime.Now,
+                PatientId = 3,
+                DoctorId = 3
+            },
+            new AppointmentModel
+            {
+                Id = 4,
+                PurposeOfVisit = "Emergency",
+                Date = new DateOnly(2024, 9, 26),
+                Time = new TimeOnly(14, 0), // 2:00 PM
+                Email = "mike.brown@example.com",
+                Phone = "919456789012",
+                Status = AppointmentStatus.SCHEDULED,
+                Message = "Immediate attention required.",
+                CreatedBy = "Admin",
+                CreatedDate = DateTime.Now,
+                LastModifiedBy = "Admin",
+                LastModifiedDate = DateTime.Now,
+                PatientId = 4,
+                DoctorId = 4
+            },
+            new AppointmentModel
+            {
+                Id = 5,
+                PurposeOfVisit = "General Checkup",
+                Date = new DateOnly(2024, 9, 28),
+                Time = new TimeOnly(16, 30), // 4:30 PM
+                Email = "chris.evans@example.com",
+                Phone = "919567890123",
+                Status = AppointmentStatus.CANCELLED,
+                Message = "Doctor is unavailable, appointment rescheduled.",
+                CreatedBy = "Admin",
+                CreatedDate = DateTime.Now,
+                LastModifiedBy = "Admin",
+                LastModifiedDate = DateTime.Now,
+                PatientId = 5,
+                DoctorId = 5
+            },
+            new AppointmentModel
+            {
+                Id = 6,
+                PurposeOfVisit = "Typhoid",
+                Date = new DateOnly(2024, 9, 30),
+                Time = new TimeOnly(8, 0), // 8:00 AM
+                Email = "emma.williams@example.com",
+                Phone = "919678901234",
+                Status = AppointmentStatus.SCHEDULED,
+                Message = "Please bring your test reports.",
+                CreatedBy = "Admin",
+                CreatedDate = DateTime.Now,
+                LastModifiedBy = "Admin",
+                LastModifiedDate = DateTime.Now,
+                PatientId = 1,
+                DoctorId = 2
+            },
+            new AppointmentModel
+            {
+                Id = 7,
+                PurposeOfVisit = "Malaria",
+                Date = new DateOnly(2024, 10, 1),
+                Time = new TimeOnly(15, 0), // 3:00 PM
+                Email = "olivia.johnson@example.com",
+                Phone = "919789012345",
+                Status = AppointmentStatus.SCHEDULED,
+                Message = "Bring blood test results.",
+                CreatedBy = "Admin",
+                CreatedDate = DateTime.Now,
+                LastModifiedBy = "Admin",
+                LastModifiedDate = DateTime.Now,
+                PatientId = 2,
+                DoctorId = 3
+            },
+            new AppointmentModel
+            {
+                Id = 8,
+                PurposeOfVisit = "Cold",
+                Date = new DateOnly(2024, 10, 3),
+                Time = new TimeOnly(13, 0), // 1:00 PM
+                Email = "ava.miller@example.com",
+                Phone = "919890123456",
+                Status = AppointmentStatus.CANCELLED,
+                Message = "Patient requested cancellation.",
+                CreatedBy = "Admin",
+                CreatedDate = DateTime.Now,
+                LastModifiedBy = "Admin",
+                LastModifiedDate = DateTime.Now,
+                PatientId = 3,
+                DoctorId = 4
+            },
+            new AppointmentModel
+            {
+                Id = 9,
+                PurposeOfVisit = "Fever",
+                Date = new DateOnly(2024, 10, 5),
+                Time = new TimeOnly(11, 0), // 11:00 AM
+                Email = "isabella.taylor@example.com",
+                Phone = "919901234567",
+                Status = AppointmentStatus.SCHEDULED,
+                Message = "Take medication before visit.",
+                CreatedBy = "Admin",
+                CreatedDate = DateTime.Now,
+                LastModifiedBy = "Admin",
+                LastModifiedDate = DateTime.Now,
+                PatientId = 4,
+                DoctorId = 5
+            },
+            new AppointmentModel
+            {
+                Id = 10,
+                PurposeOfVisit = "Consultation",
+                Date = new DateOnly(2024, 10, 7),
+                Time = new TimeOnly(9, 30), // 9:30 AM
+                Email = "mia.anderson@example.com",
+                Phone = "919012345678",
+                Status = AppointmentStatus.SCHEDULED,
+                Message = "No special instructions.",
+                CreatedBy = "Admin",
+                CreatedDate = DateTime.Now,
+                LastModifiedBy = "Admin",
+                LastModifiedDate = DateTime.Now,
+                PatientId = 5,
+                DoctorId = 1
+            },
+            new AppointmentModel
+            {
+                Id = 11,
+                PurposeOfVisit = "Follow Up",
+                Date = new DateOnly(2024, 10, 10),
+                Time = new TimeOnly(14, 0), // 2:00 PM
+                Email = "lucas.martin@example.com",
+                Phone = "919123456789",
+                Status = AppointmentStatus.CANCELLED,
+                Message = "Doctor unavailable, please reschedule.",
+                CreatedBy = "Admin",
+                CreatedDate = DateTime.Now,
+                LastModifiedBy = "Admin",
+                LastModifiedDate = DateTime.Now,
+                PatientId = 1,
+                DoctorId = 3
+            },
+            new AppointmentModel
+            {
+                Id = 12,
+                PurposeOfVisit = "Treatment",
+                Date = new DateOnly(2024, 10, 12),
+                Time = new TimeOnly(16, 30), // 4:30 PM
+                Email = "sophia.lee@example.com",
+                Phone = "919234567890",
+                Status = AppointmentStatus.SCHEDULED,
+                Message = "Please bring your previous reports.",
+                CreatedBy = "Admin",
+                CreatedDate = DateTime.Now,
+                LastModifiedBy = "Admin",
+                LastModifiedDate = DateTime.Now,
+                PatientId = 2,
+                DoctorId = 4
+            }
             );
         }
 

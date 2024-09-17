@@ -91,16 +91,16 @@ namespace CMD.Appointment.Domain.Manager
                 _logger.Error($"Invalid appointment date: {appointment.Date}");
                 throw new InvalidDataException(messageService.GetMessage("InvalidAppointment"));
             }
-            if (!await PatientValidator.ValidatePatientIdAsync(appointment.PatientId))
-            {
-                _logger.Error($"Invalid Patient ID: {appointment.PatientId}");
-                throw new InvalidPatientIdException(messageService.GetMessage("InvalidPatientId"));
-            }
-            if (!await DoctorIdValidator.ValidateDoctorIdAsync(appointment.DoctorId))
-            {
-                _logger.Error($"Invalid Doctor ID: {appointment.DoctorId}");
-                throw new InvalidDoctorIdException(messageService.GetMessage("InvalidDoctorId"));
-            }
+            //if (!await PatientValidator.ValidatePatientIdAsync(appointment.PatientId))
+            //{
+            //    _logger.Error($"Invalid Patient ID: {appointment.PatientId}");
+            //    throw new InvalidPatientIdException(messageService.GetMessage("InvalidPatientId"));
+            //}
+            //if (!await DoctorIdValidator.ValidateDoctorIdAsync(appointment.DoctorId))
+            //{
+            //    _logger.Error($"Invalid Doctor ID: {appointment.DoctorId}");
+            //    throw new InvalidDoctorIdException(messageService.GetMessage("InvalidDoctorId"));
+            //}
 
             await appointmentRepo.AddAppointment(appointment);
             _logger.Info("Appointment created successfully.");
@@ -140,16 +140,16 @@ namespace CMD.Appointment.Domain.Manager
         {
             _logger.Info($"Filtering appointments by date: {date}, Page: {pageNumber}, PageSize: {pageSize}");
 
-            if (!PaginationValidator.ValidatePagination(pageNumber, pageSize))
-            {
-                _logger.Error($"Invalid pagination parameters: PageNumber={pageNumber}, PageSize={pageSize}");
-                throw new NotValidPaginationException(messageService.GetMessage("InvalidPagination"));
-            }
-            if (!DateValidator.ValidateDate(date))
-            {
-                _logger.Error($"Invalid date: {date}");
-                throw new NotValidDateException(messageService.GetMessage("InvalidDate"));
-            }
+            //if (!PaginationValidator.ValidatePagination(pageNumber, pageSize))
+            //{
+            //    _logger.Error($"Invalid pagination parameters: PageNumber={pageNumber}, PageSize={pageSize}");
+            //    throw new NotValidPaginationException(messageService.GetMessage("InvalidPagination"));
+            //}
+            //if (!DateValidator.ValidateDate(date))
+            //{
+            //    _logger.Error($"Invalid date: {date}");
+            //    throw new NotValidDateException(messageService.GetMessage("InvalidDate"));
+            //}
 
             var filteredAppointments = await appointmentRepo.FilterAppointmentsByDate(date, pageNumber, pageSize);
             _logger.Info($"Filtered appointments by date: {date}. Total: {filteredAppointments.Count}");

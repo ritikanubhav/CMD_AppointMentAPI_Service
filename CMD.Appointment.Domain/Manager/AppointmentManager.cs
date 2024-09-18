@@ -91,16 +91,7 @@ namespace CMD.Appointment.Domain.Manager
                 _logger.Error($"Invalid appointment date: {appointment.Date}");
                 throw new InvalidDataException(messageService.GetMessage("InvalidAppointment"));
             }
-            //if (!await PatientValidator.ValidatePatientIdAsync(appointment.PatientId))
-            //{
-            //    _logger.Error($"Invalid Patient ID: {appointment.PatientId}");
-            //    throw new InvalidPatientIdException(messageService.GetMessage("InvalidPatientId"));
-            //}
-            //if (!await DoctorIdValidator.ValidateDoctorIdAsync(appointment.DoctorId))
-            //{
-            //    _logger.Error($"Invalid Doctor ID: {appointment.DoctorId}");
-            //    throw new InvalidDoctorIdException(messageService.GetMessage("InvalidDoctorId"));
-            //}
+           
 
             await appointmentRepo.AddAppointment(appointment);
             _logger.Info("Appointment created successfully.");

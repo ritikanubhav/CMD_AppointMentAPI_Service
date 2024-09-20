@@ -76,8 +76,8 @@ namespace CMD.Appointment.ApiService
                 using (var scope = app.Services.CreateScope())
                 {
                     var db = scope.ServiceProvider.GetRequiredService<AppointmentDbContext>();
-                    db.ClearDatabase();
-                    db.ResetIdentity();    
+                    //db.ClearDatabase();
+                    //db.ResetIdentity();    
                     db.Database.Migrate();
                 }
             }

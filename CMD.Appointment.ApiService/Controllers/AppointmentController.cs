@@ -16,7 +16,7 @@ namespace CMD.Appointment.ApiService.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+   // [Authorize]
     public class AppointmentController : ControllerBase
     {
         private static readonly NLog.Logger _logger = LogManager.GetCurrentClassLogger();
